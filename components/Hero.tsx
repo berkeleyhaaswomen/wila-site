@@ -17,9 +17,11 @@ export default function Hero() {
       <div className="container-wide relative flex flex-col items-center gap-8 py-28 text-center md:py-40">
         {/* WILA logo */}
         <img
-          src="/wila-logo.svg"
+          src="/wila-logo.png"
           alt="Berkeley Haas WILA — Women in Leadership Alumnae"
-          className="h-40 w-auto md:h-52"
+          width={2048}
+          height={1688}
+          className="h-52 w-auto md:h-72"
         />
 
         <h1 className="font-serif text-5xl leading-tight tracking-tight md:text-7xl">

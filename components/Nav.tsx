@@ -33,7 +33,7 @@ export default function Nav() {
       <div className="container-wide flex h-16 items-center justify-between md:h-20">
         <a href="#top" className="flex items-center gap-3">
           <img
-            src="/wila-mark.svg"
+            src="/wila-mark.png"
             alt=""
             aria-hidden="true"
             className="h-9 w-auto md:h-11"
