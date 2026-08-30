@@ -1,0 +1,68 @@
+name: Deploy to GitHub Pages
+
+on:
+  # Auto-deploy every push to main
+  push:
+    branches: [main]
+  # Allow the "Run workflow" button in the Actions tab
+  workflow_dispatch:
+  # Allow a Sanity webhook to trigger a rebuild:
+  # POST to https://api.github.com/repos/OWNER/REPO/dispatches
+  #   with { "event_type": "sanity-publish" }
+  repository_dispatch:
+    types: [sanity-publish]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Remove Studio route (deployed separately via sanity deploy)
+        run: rm -rf app/studio
+
+      - name: Build static site
+        env:
+          STATIC_EXPORT: "true"
+          NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_SANITY_PROJECT_ID }}
+          NEXT_PUBLIC_SANITY_DATASET: ${{ secrets.NEXT_PUBLIC_SANITY_DATASET || 'production' }}
+          NEXT_PUBLIC_SANITY_API_VERSION: "2025-01-01"
+        run: npm run build
+
+      # GitHub Pages doesn't serve _next paths under _* prefixes by default.
+      # A .nojekyll file disables Jekyll processing so _next assets are served.
+      - name: Add .nojekyll
+        run: touch out/.nojekyll
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./out
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
