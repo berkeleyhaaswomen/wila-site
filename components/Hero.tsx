@@ -2,7 +2,7 @@ export default function Hero() {
   return (
     <section
       id="top"
-      className="relative overflow-hidden bg-berkeley-blue text-white"
+      className="relative overflow-hidden bg-berkeley-blue bg-gradient-to-br from-[#001C38] via-berkeley-blue to-[#0B5286] text-white"
     >
       {/* soft accent glow, no photo */}
       <div
@@ -38,7 +38,7 @@ export default function Hero() {
           </a>
           <a
             href="#contact"
-            className="btn-ghost border-white/40 text-white hover:bg-white/10"
+            className="inline-flex items-center justify-center gap-2 rounded-full border border-white/60 bg-white/10 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white hover:text-berkeley-blue focus:outline-none focus:ring-2 focus:ring-california-gold focus:ring-offset-2 focus:ring-offset-berkeley-blue"
           >
             Join the network
           </a>
