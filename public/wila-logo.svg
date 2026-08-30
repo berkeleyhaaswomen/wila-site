@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 360" fill="none" role="img" aria-label="Berkeley Haas WILA — Women in Leadership Alumnae">
+  <defs>
+    <linearGradient id="wilaGold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FFE9A8" />
+      <stop offset="45%" stop-color="#FDB515" />
+      <stop offset="100%" stop-color="#C4820E" />
+    </linearGradient>
+  </defs>
+
+  <!-- Open ring -->
+  <path
+    d="M150 40 A150 150 0 1 0 300 46"
+    stroke="#FFFFFF"
+    stroke-width="6"
+    stroke-linecap="round"
+    fill="none"
+  />
+
+  <!-- Stylized golden profile + flowing hair -->
+  <g fill="url(#wilaGold)">
+    <!-- flowing hair strands -->
+    <path d="M262 42 C300 60 316 96 300 140 C296 108 282 86 258 72 C266 62 262 50 262 42 Z" />
+    <path d="M250 52 C286 74 300 112 284 156 C282 122 268 100 244 86 C254 74 250 62 250 52 Z" />
+    <!-- face profile facing right -->
+    <path d="M244 70
+             C236 84 236 100 244 112
+             C238 118 236 126 242 132
+             C236 140 240 150 250 152
+             C246 162 250 176 264 182
+             C246 192 226 190 214 176
+             C200 160 200 132 210 108
+             C220 84 234 72 244 70 Z" />
+    <!-- wavy hair accent lines -->
+    <path d="M300 150 C286 168 288 188 302 204 C280 196 274 172 288 152 Z" opacity="0.9" />
+    <path d="M290 176 C278 192 280 210 294 224 C274 216 268 194 280 176 Z" opacity="0.8" />
+  </g>
+
+  <!-- Wordmark -->
+  <text x="46" y="176" font-family="Georgia, 'Times New Roman', serif" font-size="30" fill="#FFFFFF">
+    <tspan font-style="italic" font-weight="400">Berkeley</tspan><tspan font-weight="700">Haas</tspan>
+  </text>
+  <text x="42" y="248" font-family="Arial, Helvetica, sans-serif" font-size="86" font-weight="800" letter-spacing="1" fill="#FFFFFF">WILA</text>
+  <text x="46" y="284" font-family="Arial, Helvetica, sans-serif" font-size="17" letter-spacing="0.5" fill="#FFFFFF">Women in Leadership Alumnae</text>
+</svg>

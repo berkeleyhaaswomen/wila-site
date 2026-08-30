@@ -1,76 +1,47 @@
-import HeroArt from "./HeroArt";
-
 export default function Hero() {
   return (
-    <section id="top" className="relative overflow-hidden pt-28 md:pt-36">
-      {/* background accent */}
+    <section
+      id="top"
+      className="relative overflow-hidden bg-berkeley-blue text-white"
+    >
+      {/* soft accent glow, no photo */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[520px] bg-gradient-to-b from-white to-cream"
+        className="pointer-events-none absolute -right-40 top-0 -z-0 h-[520px] w-[520px] rounded-full bg-california-gold/10 blur-3xl"
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -right-40 top-10 -z-10 h-[420px] w-[420px] rounded-full bg-california-gold/10 blur-3xl"
+        className="pointer-events-none absolute -left-40 bottom-0 -z-0 h-[420px] w-[420px] rounded-full bg-white/5 blur-3xl"
       />
 
-      <div className="container-wide grid items-center gap-12 pb-20 md:grid-cols-12 md:gap-16 md:pb-28">
-        <div className="md:col-span-6">
-          <span className="eyebrow">Berkeley Haas · Alumnae Network</span>
-          <h1 className="mt-5 font-serif text-4xl leading-[1.05] tracking-tight text-ink md:text-6xl">
-            Women in Leadership,{" "}
-            <span className="text-berkeley-blue">questioning the status quo</span>
-            <span className="text-california-gold">.</span>
-          </h1>
-          <p className="lede mt-6 max-w-xl">
-            WILA is a global network of Berkeley Haas alumnae fostering a
-            supportive community that uplifts and empowers women through
-            authentic conversation, mentorship, and leadership.
-          </p>
-          <div className="mt-8 flex flex-wrap items-center gap-3">
-            <a href="#events" className="btn-primary">
-              See upcoming events
-            </a>
-            <a href="#contact" className="btn-ghost">
-              Join the network
-            </a>
-          </div>
+      <div className="container-wide relative flex flex-col items-center gap-8 py-28 text-center md:py-40">
+        {/* WILA logo */}
+        <img
+          src="/wila-logo.svg"
+          alt="Berkeley Haas WILA — Women in Leadership Alumnae"
+          className="h-40 w-auto md:h-52"
+        />
 
-          <dl className="mt-12 grid max-w-md grid-cols-3 gap-6">
-            <div>
-              <dt className="text-xs uppercase tracking-wider text-ink/55">
-                Members
-              </dt>
-              <dd className="mt-1 font-serif text-2xl text-berkeley-blue">
-                1,200+
-              </dd>
-            </div>
-            <div>
-              <dt className="text-xs uppercase tracking-wider text-ink/55">
-                Chapters
-              </dt>
-              <dd className="mt-1 font-serif text-2xl text-berkeley-blue">
-                12
-              </dd>
-            </div>
-            <div>
-              <dt className="text-xs uppercase tracking-wider text-ink/55">
-                Years
-              </dt>
-              <dd className="mt-1 font-serif text-2xl text-berkeley-blue">
-                15+
-              </dd>
-            </div>
-          </dl>
-        </div>
+        <h1 className="font-serif text-5xl leading-tight tracking-tight md:text-7xl">
+          Welcome To WILA
+        </h1>
 
-        <div className="md:col-span-6">
-          <div className="relative">
-            <div
-              aria-hidden="true"
-              className="absolute -inset-4 -z-10 rounded-[28px] bg-berkeley-blue/5"
-            />
-            <HeroArt />
-          </div>
+        <p className="max-w-2xl text-lg leading-relaxed text-white/85 md:text-xl">
+          Berkeley Haas Women In Leadership Alumnae (WILA) is a worldwide network
+          of Berkeley Haas alumnae committed to a community that celebrates and
+          amplifies the power of bringing women together.
+        </p>
+
+        <div className="mt-2 flex flex-wrap items-center justify-center gap-3">
+          <a href="#events" className="btn-primary bg-california-gold text-ink hover:bg-california-gold/90">
+            See upcoming events
+          </a>
+          <a
+            href="#contact"
+            className="btn-ghost border-white/40 text-white hover:bg-white/10"
+          >
+            Join the network
+          </a>
         </div>
       </div>
     </section>
