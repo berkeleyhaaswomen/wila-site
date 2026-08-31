@@ -21,12 +21,34 @@ CREATE TABLE IF NOT EXISTS users (
   password_hash text NOT NULL,
   name          text,
   role          text NOT NULL CHECK (role IN ('superadmin', 'admin')),
+  -- The owner is a super admin no other super admin can remove or demote.
+  -- Guards against a co-president (or a compromised account) locking out the
+  -- person who actually runs the site. At most one, enforced below.
+  is_owner      boolean NOT NULL DEFAULT false,
   created_at    timestamptz NOT NULL DEFAULT now(),
   updated_at    timestamptz NOT NULL DEFAULT now()
 );
 
+-- Added after the initial release, so existing databases need the column too.
+ALTER TABLE users ADD COLUMN IF NOT EXISTS is_owner boolean NOT NULL DEFAULT false;
+
+-- At most one owner. A partial index only constrains the rows where it's true.
+CREATE UNIQUE INDEX IF NOT EXISTS users_single_owner_idx
+  ON users ((is_owner)) WHERE is_owner;
+
 -- Emails are case-insensitive for login purposes.
 CREATE UNIQUE INDEX IF NOT EXISTS users_email_lower_idx ON users (lower(email));
+
+-- Backfill: if there are super admins but nobody owns the site yet (a database
+-- created before is_owner existed), the longest-standing super admin becomes
+-- the owner. Without this, an upgraded database would have no protected
+-- account at all.
+UPDATE users SET is_owner = true
+WHERE id = (
+  SELECT id FROM users WHERE role = 'superadmin'
+  ORDER BY created_at ASC LIMIT 1
+)
+AND NOT EXISTS (SELECT 1 FROM users WHERE is_owner);
 
 -- --------------------------------------------------------------- events ----
 CREATE TABLE IF NOT EXISTS events (

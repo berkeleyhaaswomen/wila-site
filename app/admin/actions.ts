@@ -52,7 +52,8 @@ export async function signIn(
     id: user.id,
     email: user.email,
     name: user.name,
-    role: user.role
+    role: user.role,
+    isOwner: Boolean(user.is_owner)
   });
 
   // Only allow relative paths, so `?next=` can't be used as an open redirect.

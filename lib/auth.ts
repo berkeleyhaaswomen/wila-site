@@ -14,6 +14,7 @@ export type SessionUser = {
   email: string;
   name: string | null;
   role: Role;
+  isOwner: boolean;
 };
 
 const COOKIE = "wila_session";
@@ -109,8 +110,9 @@ export async function getSessionUser(): Promise<SessionUser | null> {
       email: string;
       name: string | null;
       role: Role;
-    }>(`SELECT id, email, name, role FROM users WHERE id = $1`, [sub]);
-    return row ?? null;
+      is_owner: boolean;
+    }>(`SELECT id, email, name, role, is_owner FROM users WHERE id = $1`, [sub]);
+    return row ? { ...row, isOwner: Boolean(row.is_owner) } : null;
   } catch {
     return null;
   }

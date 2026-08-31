@@ -1,6 +1,6 @@
 import "server-only";
 
-import { query, queryOne, dbConfigured } from "./db";
+import { db, query, queryOne, dbConfigured } from "./db";
 import type { EventItem, SpotlightItem } from "./types";
 import type { Role } from "./auth";
 
@@ -231,6 +231,7 @@ export type UserRow = {
   email: string;
   name: string | null;
   role: Role;
+  isOwner: boolean;
   createdAt: string;
 };
 
@@ -240,6 +241,7 @@ function toUser(r: any): UserRow {
     email: r.email,
     name: r.name ?? null,
     role: r.role,
+    isOwner: Boolean(r.is_owner),
     createdAt:
       r.created_at instanceof Date ? r.created_at.toISOString() : r.created_at
   };
@@ -247,7 +249,8 @@ function toUser(r: any): UserRow {
 
 export async function listUsers(): Promise<UserRow[]> {
   const rows = await query(
-    `SELECT id, email, name, role, created_at FROM users ORDER BY created_at ASC`
+    `SELECT id, email, name, role, is_owner, created_at
+     FROM users ORDER BY created_at ASC`
   );
   return rows.map(toUser);
 }
@@ -258,9 +261,11 @@ export async function findUserByEmail(email: string) {
     email: string;
     name: string | null;
     role: Role;
+    is_owner: boolean;
     password_hash: string;
   }>(
-    `SELECT id, email, name, role, password_hash FROM users WHERE lower(email) = lower($1)`,
+    `SELECT id, email, name, role, is_owner, password_hash
+     FROM users WHERE lower(email) = lower($1)`,
     [email]
   );
 }
@@ -274,7 +279,7 @@ export async function createUser(input: {
   const row = await queryOne(
     `INSERT INTO users (email, name, role, password_hash)
      VALUES ($1, $2, $3, $4)
-     RETURNING id, email, name, role, created_at`,
+     RETURNING id, email, name, role, is_owner, created_at`,
     [input.email, input.name || null, input.role, input.passwordHash]
   );
   return toUser(row);
@@ -296,6 +301,30 @@ export async function updateUserPassword(
 
 export async function deleteUser(id: string): Promise<void> {
   await query(`DELETE FROM users WHERE id = $1`, [id]);
+}
+
+/**
+ * Moves ownership to another user in one transaction, so the single-owner
+ * index is never briefly violated and we can't end up with zero owners.
+ * The new owner is promoted to superadmin if they weren't already.
+ */
+export async function transferOwnership(toUserId: string): Promise<void> {
+  if (!db) throw new Error("DATABASE_URL is not set");
+  const client = await db.connect();
+  try {
+    await client.query("BEGIN");
+    await client.query(`UPDATE users SET is_owner = false WHERE is_owner`);
+    await client.query(
+      `UPDATE users SET is_owner = true, role = 'superadmin' WHERE id = $1`,
+      [toUserId]
+    );
+    await client.query("COMMIT");
+  } catch (err) {
+    await client.query("ROLLBACK");
+    throw err;
+  } finally {
+    client.release();
+  }
 }
 
 /**

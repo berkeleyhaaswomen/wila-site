@@ -111,7 +111,25 @@ try {
     [email, name || null, role, hash]
   );
   const u = rows[0];
+
+  // The first superadmin becomes the owner: the one account no other super
+  // admin can demote, remove, or reset the password of.
+  let becameOwner = false;
+  if (u.role === "superadmin") {
+    const { rowCount } = await client.query(
+      `UPDATE users SET is_owner = true
+       WHERE id = $1 AND NOT EXISTS (SELECT 1 FROM users WHERE is_owner)`,
+      [u.id]
+    );
+    becameOwner = rowCount > 0;
+  }
+
   console.log(`\n✓ ${u.email} is now a ${u.role}.`);
+  if (becameOwner) {
+    console.log(
+      "  They are also the OWNER — no other super admin can remove or demote them."
+    );
+  }
   console.log(
     "  Sign in at /admin/login — they can change the password from Account."
   );

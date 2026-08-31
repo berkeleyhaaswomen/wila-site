@@ -20,10 +20,29 @@ The Users page is hidden from the nav for Admins, and the server rejects the
 request even if they navigate to `/admin/users` directly — the check is on the
 server, not just in the UI.
 
-Two rules the system enforces so you can't lock yourself out:
+### The owner
+
+One super admin is the **owner** — by default whoever runs `npm run admin:create`
+first. No other super admin can demote them, remove them, or reset their
+password, so a co-president (or a compromised account) can't lock them out.
+
+The owner's row shows an **OWNER** badge, and their Role / Password / Access
+controls are inert for everybody else.
+
+The only way this changes is the owner handing it over: on another super
+admin's row, the owner clicks **Make owner**. That promotes them to super
+admin if needed and drops the old owner's protection, in a single transaction
+so there's never zero owners or two.
+
+If you're the owner and you're leaving the board, transfer ownership before
+your access is removed — otherwise the account can only be cleared with direct
+database access.
+
+### Other lockout guards
 
 - The **last super admin cannot be demoted** to Admin.
 - **Nobody can remove their own access** — ask another super admin.
+- The **owner must stay a super admin**.
 
 ---
 

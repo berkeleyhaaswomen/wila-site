@@ -31,6 +31,7 @@ anywhere else.
 |---|---|
 | **Admin** (most people) | Add, edit, and delete events and spotlights. |
 | **Super admin** | All of the above, plus adding and removing the people who manage the site. |
+| **Owner** | One super admin, marked with an OWNER badge, that no other super admin can demote, remove, or reset the password of. |
 
 If you see a **Users** tab in the top nav, you're a super admin. If you don't,
 you're an Admin — and if you need someone added or removed, ask a

@@ -12,6 +12,7 @@ import {
   updateUserRole,
   updateUserPassword,
   countSuperadmins,
+  transferOwnership,
   listUsers
 } from "@/lib/repo";
 
@@ -84,12 +85,23 @@ export async function changeRole(formData: FormData): Promise<void> {
   const target = users.find((u) => u.id === id);
   if (!target) return;
 
+  // Only the owner can change the owner's role.
+  if (target.isOwner && target.id !== me.id) {
+    redirect("/admin/users?error=owner-protected");
+  }
+
   if (
     target.role === "superadmin" &&
     role === "admin" &&
     (await countSuperadmins()) <= 1
   ) {
     redirect("/admin/users?error=last-superadmin");
+  }
+
+  // The owner must stay a super admin; demoting them would leave an account
+  // nobody can manage.
+  if (target.isOwner && role === "admin") {
+    redirect("/admin/users?error=owner-must-be-superadmin");
   }
 
   await updateUserRole(id, role);
@@ -110,6 +122,9 @@ export async function removeUser(formData: FormData): Promise<void> {
   const target = users.find((u) => u.id === id);
   if (!target) return;
 
+  // The owner can only be removed by transferring ownership first.
+  if (target.isOwner) redirect("/admin/users?error=owner-protected");
+
   if (target.role === "superadmin" && (await countSuperadmins()) <= 1) {
     redirect("/admin/users?error=last-superadmin");
   }
@@ -124,9 +139,16 @@ export async function resetUserPassword(
   _prev: UserFormState | undefined,
   formData: FormData
 ): Promise<UserFormState> {
-  await requireSuperadmin("/admin/users");
+  const me = await requireSuperadmin("/admin/users");
 
   const id = String(formData.get("id") ?? "").trim();
+
+  // Resetting someone's password is equivalent to taking over their account,
+  // so the owner's password is off-limits to everyone but the owner.
+  const target = (await listUsers()).find((u) => u.id === id);
+  if (target?.isOwner && target.id !== me.id) {
+    return { error: "Only the owner can change the owner's password." };
+  }
   const password = String(formData.get("password") ?? "");
   if (!id) return { error: "Missing user." };
 
@@ -136,4 +158,23 @@ export async function resetUserPassword(
   await updateUserPassword(id, await hashPassword(password));
   revalidateUsers();
   return { ok: "Password reset. Share it with them privately, and ask them to change it." };
+}
+
+/**
+ * Hand ownership to another super admin. Only the current owner can do this,
+ * and it's the only way the owner's protection is ever lifted.
+ */
+export async function makeOwner(formData: FormData): Promise<void> {
+  const me = await requireSuperadmin("/admin/users");
+  if (!me.isOwner) redirect("/admin/users?error=owner-only");
+
+  const id = String(formData.get("id") ?? "").trim();
+  if (!id || id === me.id) return;
+
+  const target = (await listUsers()).find((u) => u.id === id);
+  if (!target) return;
+
+  await transferOwnership(id);
+  revalidateUsers();
+  redirect("/admin/users?owner=1");
 }

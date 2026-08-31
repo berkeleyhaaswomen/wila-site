@@ -110,6 +110,60 @@ await step("updated_at trigger fires on UPDATE", async () => {
   throw new Error("trigger did not overwrite a manually-set updated_at");
 });
 
+console.log("\nowner");
+let peerId;
+await step("first superadmin claims ownership", async () => {
+  const r = await db.query(
+    `UPDATE users SET is_owner = true
+     WHERE id = $1 AND NOT EXISTS (SELECT 1 FROM users WHERE is_owner)
+     RETURNING id`,
+    [userId]
+  );
+  if (r.rows.length !== 1) throw new Error("owner not set");
+});
+await step("a second claim is a no-op (owner already exists)", async () => {
+  const r = await db.query(
+    `INSERT INTO users (email, role, password_hash) VALUES ($1,$2,$3) RETURNING id`,
+    ["peer@example.com", "superadmin", "x"]
+  );
+  peerId = r.rows[0].id;
+  const claim = await db.query(
+    `UPDATE users SET is_owner = true
+     WHERE id = $1 AND NOT EXISTS (SELECT 1 FROM users WHERE is_owner)
+     RETURNING id`,
+    [peerId]
+  );
+  if (claim.rows.length !== 0) throw new Error("second user also became owner");
+});
+await step("two owners are rejected by the unique index", async () => {
+  try {
+    await db.query(`UPDATE users SET is_owner = true WHERE id = $1`, [peerId]);
+  } catch {
+    return; // expected
+  }
+  throw new Error("a second owner was allowed");
+});
+await step("transferOwnership moves it atomically", async () => {
+  await db.query("BEGIN");
+  await db.query(`UPDATE users SET is_owner = false WHERE is_owner`);
+  await db.query(
+    `UPDATE users SET is_owner = true, role = 'superadmin' WHERE id = $1`,
+    [peerId]
+  );
+  await db.query("COMMIT");
+  const r = await db.query(`SELECT id FROM users WHERE is_owner`);
+  if (r.rows.length !== 1 || r.rows[0].id !== peerId) {
+    throw new Error(`expected exactly the peer to own; got ${r.rows.length} owner(s)`);
+  }
+});
+await step("hand ownership back", async () => {
+  await db.query("BEGIN");
+  await db.query(`UPDATE users SET is_owner = false WHERE is_owner`);
+  await db.query(`UPDATE users SET is_owner = true WHERE id = $1`, [userId]);
+  await db.query("COMMIT");
+  await db.query(`DELETE FROM users WHERE id = $1`, [peerId]);
+});
+
 console.log("\nevents");
 let eventId;
 const eventCols = [
@@ -255,6 +309,7 @@ await step("deleteSpotlight", async () => {
   await db.query(`DELETE FROM spotlights WHERE id = $1`, [spotId]);
 });
 await step("deleteUser", async () => {
+  await db.query(`UPDATE users SET is_owner = false WHERE id = $1`, [userId]);
   await db.query(`DELETE FROM users WHERE id = $1`, [userId]);
 });
 
