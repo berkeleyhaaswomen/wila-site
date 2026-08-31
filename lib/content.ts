@@ -1,40 +1,19 @@
 /**
- * Central content layer.
+ * Central content layer for the PUBLIC site.
  *
- * If Sanity is configured, data comes from the CMS. Otherwise, the site
- * renders the hardcoded fallbacks below — so a fresh clone always builds and
- * the site never goes dark waiting on a CMS.
+ * Content is edited in the admin site at /admin and stored in Postgres. If
+ * DATABASE_URL isn't set, the site renders the hardcoded fallbacks below — so
+ * a fresh clone always builds and the site never goes dark waiting on a
+ * database.
  */
 
-import { sanityClient } from "./sanity.client";
-import {
-  eventsQuery,
-  boardQuery,
-  spotlightQuery,
-  settingsQuery
-} from "./sanity.queries";
+import { dbConfigured } from "./db";
+import { listEvents, getCurrentSpotlight } from "./repo";
+import type { EventItem, SpotlightItem, BoardMember } from "./types";
 
-export type EventItem = {
-  _id?: string;
-  title: string;
-  startsAt?: string; // ISO
-  endsAt?: string;
-  date?: string; // pre-formatted fallback
-  location: string;
-  format: "In person" | "Virtual" | "Hybrid";
-  price?: string;
-  blurb: string;
-  rsvpUrl?: string;
-};
-
-export type BoardMember = {
-  _id?: string;
-  name: string;
-  role: string;
-  linkedin?: string;
-  photo?: any;
-  isDraft?: boolean;
-};
+export type { EventItem, SpotlightItem, BoardMember } from "./types";
+export { EVENT_FORMATS, PILLARS } from "./types";
+export { formatEventDate, partitionEvents } from "./format";
 
 // ---- Fallbacks ---------------------------------------------------------
 
@@ -73,6 +52,22 @@ const FALLBACK_EVENTS: EventItem[] = [
   }
 ];
 
+const FALLBACK_SPOTLIGHT: SpotlightItem = {
+  name: "Priya Ramanathan",
+  gradYear: "MBA ’14",
+  title: "VP of Product, Lumen Health",
+  spotlightLabel: "Q2 2026 Spotlight",
+  quote:
+    "“The most useful thing Haas gave me wasn’t a framework — it was permission. Permission to ask the uncomfortable question in the room, to change my mind in public, to build a career that looks nothing like the one I drew up at 24. WILA is where I keep practicing that permission. Every time I show up, someone nudges me to go bigger than I planned to.”",
+  bio:
+    "Priya leads the product org at Lumen Health, a Series C startup rethinking maternal and family care. Before Lumen she spent seven years at a major health system, where she launched one of the first telehealth programs on the West Coast. She mentors two WILA members each year and co-chairs our Bay Area chapter.",
+  linkedin: "https://www.linkedin.com/",
+  pillar: "Student Always",
+  chapter: "Bay Area",
+  mentorCohort: "2024 – present",
+  nominateUrl: "#contact"
+};
+
 const FALLBACK_BOARD: BoardMember[] = [
   { name: "Tricia Tran", role: "Founding Co-President & Advisor", linkedin: "https://www.linkedin.com/in/triciatranbayarea/" },
   { name: "Abha Bhagat", role: "Founding Co-President", linkedin: "https://www.linkedin.com/in/abhabhagat/" },
@@ -86,73 +81,31 @@ const FALLBACK_BOARD: BoardMember[] = [
   { name: "Sheila", role: "Board Member", isDraft: true }
 ];
 
-// ---- Formatting helpers ------------------------------------------------
-
-export function formatEventDate(e: EventItem): string {
-  if (e.date) return e.date;
-  if (!e.startsAt) return "TBD";
-  const d = new Date(e.startsAt);
-  return d.toLocaleString("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-    timeZoneName: "short"
-  });
-}
-
-export function partitionEvents(items: EventItem[]) {
-  const now = Date.now();
-  const upcoming: EventItem[] = [];
-  const past: EventItem[] = [];
-  for (const e of items) {
-    const ts = e.startsAt ? new Date(e.startsAt).getTime() : NaN;
-    // If no timestamp (only pre-formatted date), assume past.
-    if (isFinite(ts) && ts >= now) upcoming.push(e);
-    else past.push(e);
-  }
-  return { upcoming, past };
-}
-
 // ---- Public getters ----------------------------------------------------
 
 export async function getEvents(): Promise<EventItem[]> {
-  if (!sanityClient) return FALLBACK_EVENTS;
+  if (!dbConfigured) return FALLBACK_EVENTS;
   try {
-    const data = await sanityClient.fetch<EventItem[]>(eventsQuery);
-    return data?.length ? data : FALLBACK_EVENTS;
+    const data = await listEvents();
+    return data.length ? data : FALLBACK_EVENTS;
   } catch (err) {
-    console.warn("[content] events fetch failed, using fallback:", err);
+    console.warn("[content] events query failed, using fallback:", err);
     return FALLBACK_EVENTS;
   }
 }
 
-export async function getBoard(): Promise<BoardMember[]> {
-  if (!sanityClient) return FALLBACK_BOARD;
+export async function getSpotlight(): Promise<SpotlightItem> {
+  if (!dbConfigured) return FALLBACK_SPOTLIGHT;
   try {
-    const data = await sanityClient.fetch<BoardMember[]>(boardQuery);
-    return data?.length ? data : FALLBACK_BOARD;
+    const data = await getCurrentSpotlight();
+    return data ?? FALLBACK_SPOTLIGHT;
   } catch (err) {
-    console.warn("[content] board fetch failed, using fallback:", err);
-    return FALLBACK_BOARD;
+    console.warn("[content] spotlight query failed, using fallback:", err);
+    return FALLBACK_SPOTLIGHT;
   }
 }
 
-export async function getSpotlight() {
-  if (!sanityClient) return null;
-  try {
-    return await sanityClient.fetch(spotlightQuery);
-  } catch {
-    return null;
-  }
-}
-
-export async function getSettings() {
-  if (!sanityClient) return null;
-  try {
-    return await sanityClient.fetch(settingsQuery);
-  } catch {
-    return null;
-  }
+export async function getBoard(): Promise<BoardMember[]> {
+  // The board list is not editable in the admin site yet — it stays in code.
+  return FALLBACK_BOARD;
 }

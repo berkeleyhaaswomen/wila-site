@@ -1,8 +1,7 @@
 import { getBoard } from "@/lib/content";
-import { imageUrlFor } from "@/lib/sanity.client";
 
-function Avatar({ name, photo }: { name: string; photo?: any }) {
-  const url = photo ? imageUrlFor(photo)?.width(112).height(112).url() : null;
+function Avatar({ name, photoUrl }: { name: string; photoUrl?: string }) {
+  const url = photoUrl || null;
   if (url) {
     // eslint-disable-next-line @next/next/no-img-element
     return (
@@ -45,10 +44,10 @@ export default async function Leadership() {
         <ul className="mt-12 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {board.map((m) => (
             <li
-              key={m._id ?? m.name}
+              key={m.id ?? m.name}
               className="card flex items-center gap-4 p-4 md:p-5"
             >
-              <Avatar name={m.name} photo={m.photo} />
+              <Avatar name={m.name} photoUrl={m.photoUrl} />
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
                   <span className="truncate font-semibold text-ink">

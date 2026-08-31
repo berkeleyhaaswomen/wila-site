@@ -1,205 +1,271 @@
 # WILA Site — Admin Guide
 
-This site is a Next.js app on **Vercel**, with content managed through an
-embedded **Sanity Studio** available at `/studio`. Board members log in with
-email or Google to add events, rotate the alumnae spotlight, and update the
-board list — no code required.
+The public site is a Next.js app on **Vercel**. Content is managed from an
+**admin site built into the same app at `/admin`**, reachable from the
+**"Administrator? Sign in here."** link in the site footer.
+
+Board members sign in with an email and password to add events and rotate the
+alumnae spotlight. No code required.
 
 ---
 
-## Roles & Permissions (at a glance)
+## Roles & Permissions
 
-Sanity provides three built-in roles. Assign them at
-[sanity.io/manage](https://sanity.io/manage) → your project → **Members**.
+| Role | What they can do |
+|---|---|
+| **Super admin** | Everything. Adds and removes the people who manage the website, changes their roles, resets their passwords, edits all content. |
+| **Admin** | Every content page — events and spotlights: create, edit, delete. **Cannot** add or remove users or change roles. |
 
-| Role | What they can do | Who gets it |
-|---|---|---|
-| **Administrator** | Everything: invite/remove users, change roles, delete content, manage the project | Co-Presidents, and the person maintaining the site |
-| **Editor** | Create and edit any content (events, spotlights, board members, site settings). Cannot manage users or the project itself | Most board members and any WILA volunteer publishing content |
-| **Viewer** | Read-only access to the Studio and drafts | Board members who only need to review before publishing |
+The Users page is hidden from the nav for Admins, and the server rejects the
+request even if they navigate to `/admin/users` directly — the check is on the
+server, not just in the UI.
 
-Sanity's free tier includes **3 users** on the paid plans it's 20+. If you need
-finer-grained permissions (e.g. "Can edit events but not board members"),
-Sanity's [Custom Roles](https://www.sanity.io/docs/access-control) are on the
-Growth plan ($99/mo).
+Two rules the system enforces so you can't lock yourself out:
+
+- The **last super admin cannot be demoted** to Admin.
+- **Nobody can remove their own access** — ask another super admin.
 
 ---
 
 ## First-time setup (do this once)
 
-You need: a GitHub account, a Sanity account (free), and a Vercel account
-(free).
+You need a GitHub account, a Vercel account, and a Postgres database. All have
+free tiers.
 
-### 1. Push this repo to GitHub
+### 1. Create a Postgres database
+
+Any provider works. [Neon](https://neon.tech) is the easiest free option:
+
+1. Sign up, create a project
+2. Copy the **connection string** (it looks like
+   `postgresql://user:pass@ep-xxx.aws.neon.tech/neondb?sslmode=require`)
+
+Supabase, Vercel Postgres, or your own server work identically — the app only
+needs the connection string.
+
+### 2. Configure the app locally
 
 ```bash
-cd wila-site
-git init
-git add .
-git commit -m "Initial WILA site"
-gh repo create wila-site --public --source=. --push
-# or: create a repo on github.com and follow the "push existing" instructions
+cp .env.example .env.local
 ```
 
-### 2. Create a Sanity project
+Fill in:
+
+- `DATABASE_URL` — the connection string from step 1
+- `AUTH_SECRET` — generate one with `openssl rand -base64 32`
+
+`AUTH_SECRET` signs the login cookie. **Keep it secret**, and use a different
+value in production than in local development. If it ever leaks, change it —
+that immediately signs everybody out.
+
+### 3. Create the tables
 
 ```bash
-npx sanity@latest init --env
+npm run db:migrate
 ```
 
-- Choose **Create new project** → name it "WILA Content"
-- Dataset: `production` (the default)
-- Output path: leave the current directory
-- When prompted for the config, **decline** the sample data
-- This writes `.env.local` with your `NEXT_PUBLIC_SANITY_PROJECT_ID`
+Safe to run repeatedly; it only creates what's missing.
 
-### 3. Configure CORS so the Studio can log in
+### 4. Create the first super admin
 
-Go to [sanity.io/manage](https://sanity.io/manage) → your project →
-**API** → **CORS origins** → **Add CORS origin**:
+```bash
+npm run admin:create
+```
 
-- `http://localhost:3000` (allow credentials: ✓)
-- `https://wila.haasalumni.org` (allow credentials: ✓)
-- Any Vercel preview domain you use, e.g. `https://wila-site-*.vercel.app`
+It asks for an email, a display name, a role, and a password. **The password
+prompt is hidden** — nothing is echoed to your terminal, written to your shell
+history, or stored in this repo. Use a strong one; the minimum is 12
+characters.
 
-### 4. Deploy to Vercel
+After this, super admins add everyone else from `/admin/users` — you shouldn't
+need this script again except to recover a locked-out account.
+
+### 5. Deploy to Vercel
 
 ```bash
 npm install -g vercel
-vercel link       # follow prompts
-vercel env pull   # (only if you already added env vars in the dashboard)
+vercel link
 vercel --prod
 ```
 
 In the Vercel dashboard → your project → **Settings → Environment Variables**,
-add these (they're already in `.env.local` locally):
+add the same two variables (`DATABASE_URL`, `AUTH_SECRET`), then redeploy.
 
-- `NEXT_PUBLIC_SANITY_PROJECT_ID`
-- `NEXT_PUBLIC_SANITY_DATASET` = `production`
-- `NEXT_PUBLIC_SANITY_API_VERSION` = `2025-01-01`
+Run the migration once against the production database too — either set
+`DATABASE_URL` locally to the production string and run `npm run db:migrate`,
+or run it from the provider's SQL console by pasting in `db/schema.sql`.
 
-Then redeploy: `vercel --prod`.
+### 6. Photo uploads (optional)
 
-### 5. Point the domain
+To let admins upload spotlight photos from their computer rather than pasting
+a URL:
 
-In Vercel → **Settings → Domains** add `wila.haasalumni.org`. Vercel gives
-you a CNAME record (`cname.vercel-dns.com`). Add it to the DNS for
-`haasalumni.org` and wait ~5 minutes.
+1. Vercel dashboard → **Storage** → **Create** → **Blob**
+2. Copy the store's **Read/Write Token**
+3. Add it as `BLOB_READ_WRITE_TOKEN` in both `.env.local` and Vercel
+
+Without it everything still works — the upload button is disabled and admins
+paste an image URL instead.
+
+### 7. Point the domain
+
+Vercel → **Settings → Domains** → add `wila.haasalumni.org`, then add the
+CNAME record Vercel gives you to the DNS for `haasalumni.org`.
 
 ---
 
-## Inviting board members (super admin view)
+## Managing who has access (super admins)
 
-1. Log in to [sanity.io/manage](https://sanity.io/manage)
-2. Pick your project → **Members** tab
-3. Click **Invite members**
-4. Enter their email address
-5. Choose their role: **Administrator**, **Editor**, or **Viewer**
-6. Click **Send invite** — they get an email with a signup link
+Go to **`/admin/users`**.
 
-Recommended assignments for WILA:
+**To add someone:** fill in the "Add someone" form at the bottom — email,
+optional name, role, and a temporary password. There is no invitation email,
+so share the temporary password with them privately (in person or over
+Signal/Slack — not email if you can avoid it) and ask them to change it from
+the **Account** page as soon as they sign in.
 
-- **Administrators (2–3 people, max):** Co-Presidents + technical maintainer
-- **Editors (rest of the board):** everyone who needs to add events or update
-  the spotlight
-- **Viewers (optional):** external reviewers or advisors
+**To change a role:** pick the new role from the dropdown in their row and
+click Save.
 
-To **remove someone**: same page → click their name → **Remove from project**.
-To **change a role**: click their name → change the role dropdown → **Save**.
+**To reset a locked-out person's password:** click "Reset password" in their
+row, set a new one, and share it privately.
+
+**To remove someone:** click Remove in their row. This is immediate — any
+session they have open stops working on their next click, because every
+request re-checks the account against the database.
+
+Recommended for WILA: 2–3 super admins (Co-Presidents plus the technical
+maintainer), everyone else Admin.
 
 ---
 
 ## Everyday content tasks
 
-The Studio lives at **`https://wila.haasalumni.org/studio`**. Log in with the
-email you invited. You'll see three sections in the sidebar:
+Sign in at **`/admin`**.
 
-### Add an event
+### Add or edit an event
 
-1. Click **Events** → **+ Create**
-2. Fill in title, start time, location, format (In person / Virtual / Hybrid),
-   price, and blurb
-3. Add an RSVP or recap URL
-4. Click **Publish** (top right)
+**Events → New event** (or click an existing one).
 
-Events auto-partition to "Upcoming" vs "Past" on the site based on `startsAt`.
-No need to move them manually.
+| Field | Where it shows on the public site |
+|---|---|
+| Event title | The card headline |
+| Slug | The URL-safe id. Leave blank to generate from the title |
+| Blurb | The paragraph on the card |
+| Starts at | The date line, and whether it counts as Upcoming or Past |
+| Ends at | Optional, joins the date line |
+| Location | The pin row |
+| Format | The **In person / Virtual / Hybrid** badge |
+| Price | The dollar row — write "Free" or "$75" |
+| RSVP / recap link | The link at the bottom of the card |
+
+Events move between **Upcoming** and **Past** automatically based on the start
+time — you never move them by hand. The bottom link is labelled "RSVP" for
+upcoming events and "View recap" for past ones.
 
 ### Rotate the alumnae spotlight
 
-1. Click **Alumna spotlights** → **+ Create**
-2. Fill in name, class year, current title, quote, bio, LinkedIn, and photo
-3. Set **Featured from** to today's date
-4. Click **Publish**
+**Spotlights → New spotlight**.
 
-The site shows the spotlight with the most recent `Featured from` date. Past
-spotlights stay in the CMS for reference.
+| Field | Where it shows |
+|---|---|
+| Alumna name + Class year | The small-caps byline |
+| Spotlight label | The badge over the photo, e.g. "Q2 2026 Spotlight" |
+| Current title | The large serif headline |
+| Quote | The gold-rule pull quote |
+| Short bio | The paragraph under the quote |
+| Photo | The portrait — upload a file or paste a URL |
+| LinkedIn URL | The "View LinkedIn profile" button |
+| 'Nominate an alumna' link | That button. Defaults to `#contact` |
+| Pillar / Chapter / Mentor cohort | The three-column strip at the bottom |
+| Featured from | Which spotlight wins the homepage |
 
-### Update the board
+The homepage shows the spotlight with the **most recent "Featured from"**
+date. Older ones stay in the list for reference — the one currently live is
+tagged "On the homepage".
 
-1. Click **Board members** → pick a person, or **+ Create** for a new one
-2. Update name, role, LinkedIn, photo
-3. Set **Display order** — lower numbers show first (e.g. Co-Presidents = 1–3)
-4. Toggle **Mark as draft** off once details are confirmed
-5. Click **Publish**
+Any field you leave blank is omitted from the card rather than rendering an
+empty row, so a half-filled spotlight still looks intentional.
 
-### Edit the hero / about copy
+### Change your own password
 
-1. Click **Site settings** (pinned at the top)
-2. Update the hero eyebrow, headline, subhead, or About section
-3. Click **Publish**
+**Account → Change your password.** Requires your current password.
 
 ---
 
 ## Making changes appear live
 
-The site uses Vercel's static generation. After you **Publish** in the Studio:
-
-- Content updates roll out on the next build (default: within an hour)
-- To force an immediate refresh, either trigger a Vercel redeploy from the
-  dashboard (Deployments → **⋯** → Redeploy) or wire up a
-  [Sanity webhook](https://www.sanity.io/docs/webhooks) → Vercel Deploy Hook
-  for instant updates
+Saving in the admin site calls `revalidatePath("/")`, so the public homepage
+picks up changes on the next request — usually within seconds. No redeploy
+needed.
 
 ---
 
 ## Local development
 
 ```bash
-cp .env.example .env.local   # fill in your project ID
+cp .env.example .env.local   # fill in DATABASE_URL and AUTH_SECRET
 npm install
-npm run dev                  # site at localhost:3000, studio at localhost:3000/studio
+npm run db:migrate
+npm run admin:create
+npm run dev                  # site at localhost:3000, admin at /admin
 ```
 
-If you skip the `.env.local` step, the site still runs — it just shows the
-hardcoded fallback content in `lib/content.ts` and `/studio` shows a
-"setup required" screen.
+Without `DATABASE_URL` the public site still runs — it shows the hardcoded
+fallback content in `lib/content.ts`, and `/admin` explains what's missing.
+
+To check the SQL without a database server:
+
+```bash
+npm run db:verify
+```
+
+This runs `db/schema.sql` and every query the app issues against an in-process
+Postgres (PGlite), and reports any failures.
 
 ---
 
 ## Troubleshooting
 
-**"CORS error" when logging into the Studio.**
-Add your domain (and localhost:3000) in sanity.io/manage → API → CORS origins,
-with "Allow credentials" checked.
+**"AUTH_SECRET must be set to a random string of at least 32 characters."**
+Generate one with `openssl rand -base64 32` and add it to `.env.local` (and to
+Vercel for production).
 
-**Content published but not showing on the site.**
-Vercel builds are cached. Trigger a redeploy from the Vercel dashboard, or
-set up a Sanity → Vercel webhook so publishes deploy automatically.
+**"The database isn't configured yet."**
+`DATABASE_URL` is missing or empty. Add it, then `npm run db:migrate`.
 
-**Editor can't see the Studio.**
-Verify they accepted the invite email and that they're logged into Sanity with
-the same email address. Ask them to visit
-`https://wila.haasalumni.org/studio` in an incognito window.
+**"relation 'users' does not exist"**
+The connection works but the tables aren't there. Run `npm run db:migrate`
+against that database.
 
-**Need to reset a member's password.**
-Sanity uses SSO (Google, GitHub, email magic link). Ask them to use the "Log
-in with email" option, which sends a magic link every time — no password.
+**Everyone is locked out.**
+Run `npm run admin:create` with the production `DATABASE_URL` set. Using an
+existing email resets that account's password and role rather than failing.
+
+**A published change isn't on the public site.**
+Hard-refresh (Cmd/Ctrl + Shift + R). If it's still missing, check the event's
+start time — it may have sorted into Past rather than Upcoming.
+
+**Uploads say they aren't configured.**
+`BLOB_READ_WRITE_TOKEN` isn't set. Either add it (step 6) or paste an image
+URL instead.
 
 ---
 
-## Escalation / support
+## Security notes
 
-- Sanity account, roles, permissions → [sanity.io/manage](https://sanity.io/manage)
-- Hosting, custom domain, deploy failures → [vercel.com/dashboard](https://vercel.com/dashboard)
-- Site code, schemas, layout → this GitHub repo (open an issue)
+- Passwords are hashed with **bcrypt** (cost 12). Plain passwords are never
+  stored or logged.
+- The session is a signed JWT in an **httpOnly, SameSite=Lax** cookie, marked
+  Secure in production, expiring after **8 hours**.
+- Every request re-reads the account from the database, so a removed user or a
+  changed role takes effect immediately rather than when the token expires.
+- The login form gives the **same error** for an unknown email and a wrong
+  password, so it can't be used to discover which emails have accounts.
+- The upload endpoint requires a signed-in admin and limits files to 5 MB of
+  image types only.
+- Role checks live in server actions and page guards, not just in the UI.
+
+What this setup does **not** have yet, and is worth adding if the board grows:
+rate limiting on the login form, two-factor authentication, an audit log of
+who changed what, and self-service password reset by email.

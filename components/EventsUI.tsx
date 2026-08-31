@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import type { EventItem } from "@/lib/content";
-import { formatEventDate } from "@/lib/content";
+import type { EventItem } from "@/lib/types";
+import { formatEventDate } from "@/lib/format";
 
 function FormatBadge({ format }: { format: EventItem["format"] }) {
   const styles =
@@ -154,7 +154,7 @@ export default function EventsUI({
         ) : (
           items.map((e) => (
             <EventCard
-              key={e._id ?? e.title}
+              key={e.id ?? e.title}
               item={e}
               isPast={tab === "past"}
             />

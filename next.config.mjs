@@ -1,7 +1,8 @@
 /**
- * When STATIC_EXPORT=true (set by the GitHub Pages workflow) we build a fully
- * static site into ./out. Otherwise we build normally, which supports the
- * embedded /studio route.
+ * The admin site at /admin needs a server (Server Actions, dynamic routes, an
+ * upload API route), so a static export can no longer include it — the
+ * STATIC_EXPORT path is kept only for a hypothetical public-site-only build,
+ * and the GitHub Pages workflow that used it is disabled. Deploy on Vercel.
  */
 const isStaticExport = process.env.STATIC_EXPORT === "true";
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
@@ -15,10 +16,14 @@ const nextConfig = {
     images: { unoptimized: true }
   }),
   ...(basePath && { basePath, assetPrefix: basePath }),
+  // Spotlight photos are plain <img> tags pointing at Vercel Blob or a pasted
+  // URL, so next/image isn't in play — but keep uploads working if it ever is.
   images: isStaticExport
     ? { unoptimized: true }
     : {
-        remotePatterns: [{ protocol: "https", hostname: "cdn.sanity.io" }]
+        remotePatterns: [
+          { protocol: "https", hostname: "*.public.blob.vercel-storage.com" }
+        ]
       }
 };
 
