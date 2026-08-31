@@ -13,14 +13,19 @@ import { stdin, stdout } from "node:process";
 import pg from "pg";
 import bcrypt from "bcryptjs";
 
-import { loadEnv } from "./load-env.mjs";
+import { loadEnvForTarget, positionalArgs } from "./load-env.mjs";
 
-loadEnv();
+const { prod, file } = loadEnvForTarget();
 
 const url = process.env.DATABASE_URL;
 if (!url) {
-  console.error("DATABASE_URL is not set. Add it to .env.local first.");
+  console.error(`DATABASE_URL is not set in ${file}.`);
   process.exit(1);
+}
+
+if (prod) {
+  const host = url.replace(/^.*@/, "").replace(/\/.*$/, "");
+  console.log(`Target: PRODUCTION (${host})\n`);
 }
 
 // Two input paths, because Node's readline behaves differently on each:
@@ -67,15 +72,22 @@ function ask(query, { hidden = false } = {}) {
 }
 
 let exitCode = 0;
-const client = new pg.Client({
-  connectionString: url,
-  ssl: /localhost|127\.0\.0\.1/.test(url)
-    ? undefined
-    : { rejectUnauthorized: false }
-});
+
+// Built only once the prompts are done: constructing a pg.Client parses the
+// connection string, and on Neon that prints an sslmode deprecation notice
+// which lands on top of the first prompt and makes it look like a hang.
+let client = null;
+function connectionClient() {
+  return new pg.Client({
+    connectionString: url,
+    ssl: /localhost|127\.0\.0\.1/.test(url)
+      ? undefined
+      : { rejectUnauthorized: false }
+  });
+}
 
 try {
-  const email = (process.argv[2] || (await ask("Email: "))).toLowerCase();
+  const email = (positionalArgs()[0] || (await ask("Email: "))).toLowerCase();
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
     throw new Error("That doesn't look like an email address.");
   }
@@ -98,6 +110,7 @@ try {
     throw new Error("Passwords didn't match.");
   }
 
+  client = connectionClient();
   await client.connect();
   const hash = await bcrypt.hash(password, 12);
   const { rows } = await client.query(
@@ -138,6 +151,6 @@ try {
   exitCode = 1;
 } finally {
   rl.close();
-  await client.end().catch(() => {});
+  if (client) await client.end().catch(() => {});
   process.exit(exitCode);
 }

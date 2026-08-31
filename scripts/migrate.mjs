@@ -11,17 +11,25 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import pg from "pg";
 
-import { loadEnv } from "./load-env.mjs";
+import { loadEnvForTarget } from "./load-env.mjs";
 
-loadEnv();
+const { prod, file } = loadEnvForTarget();
 
 const url = process.env.DATABASE_URL;
 if (!url) {
   console.error(
-    "DATABASE_URL is not set.\n" +
-      "Add it to .env.local (see .env.example), then re-run: npm run db:migrate"
+    `DATABASE_URL is not set in ${file}.\n` +
+      (prod
+        ? "Create .env.production.local with your live DATABASE_URL, then re-run."
+        : "Add it to .env.local (see .env.example), then re-run: npm run db:migrate")
   );
   process.exit(1);
+}
+
+if (prod) {
+  // Say out loud which database is about to change.
+  const host = url.replace(/^.*@/, "").replace(/\/.*$/, "");
+  console.log(`Target: PRODUCTION (${host})\n`);
 }
 
 const here = dirname(fileURLToPath(import.meta.url));
