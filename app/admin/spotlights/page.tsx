@@ -19,7 +19,7 @@ export default async function SpotlightsPage({
   let items: SpotlightItem[] = [];
   let error: string | null = null;
 
-  if (dbConfigured) {
+  if (dbConfigured()) {
     try {
       items = await listSpotlights();
     } catch (err) {

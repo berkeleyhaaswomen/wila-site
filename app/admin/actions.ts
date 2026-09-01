@@ -28,7 +28,7 @@ export async function signIn(
   if (!email || !password) {
     return { error: "Enter your email and password." };
   }
-  if (!dbConfigured) {
+  if (!dbConfigured()) {
     return {
       error:
         "The database isn't configured yet. Set DATABASE_URL, then run: npm run db:migrate"

@@ -4,29 +4,41 @@ import { Pool } from "pg";
  * Postgres connection.
  *
  * Works with any Postgres provider (Neon, Supabase, Vercel Postgres, RDS) —
- * the only configuration is DATABASE_URL. If it isn't set, `db` is null and
- * callers fall back to the hardcoded content in lib/content.ts, so the public
- * site still builds and renders in a fresh clone.
+ * the only configuration is DATABASE_URL. If it isn't set, callers fall back
+ * to the hardcoded content in lib/content.ts, so the public site still builds
+ * and renders in a fresh clone.
+ *
+ * Everything here reads process.env *lazily*, inside functions. Reading it at
+ * module scope looks equivalent but isn't: bundlers can fold a module-scope
+ * `process.env.X` into a literal at build time, and Vercel deliberately hides
+ * Secret-type variables from the build. That combination bakes in an empty
+ * string and the deployed site reports "database not configured" no matter
+ * what's in the dashboard.
  *
  * The pool is cached on globalThis because Next.js dev (and serverless warm
  * starts) re-evaluate modules; without this we'd leak a pool per reload.
  */
 
-const connectionString = process.env.DATABASE_URL ?? "";
+function connectionString(): string {
+  return process.env.DATABASE_URL ?? "";
+}
 
-export const dbConfigured = connectionString.length > 0;
+/** True when a database is configured. Call it; don't hoist it to a const. */
+export function dbConfigured(): boolean {
+  return connectionString().length > 0;
+}
 
 declare global {
   // eslint-disable-next-line no-var
   var __wilaPool: Pool | undefined;
 }
 
-function createPool(): Pool {
+function createPool(url: string): Pool {
   return new Pool({
-    connectionString,
+    connectionString: url,
     // Hosted Postgres (Neon/Supabase/Vercel) requires TLS. Local dev against a
     // plain postgres:// on localhost does not.
-    ssl: /localhost|127\.0\.0\.1/.test(connectionString)
+    ssl: /localhost|127\.0\.0\.1/.test(url)
       ? undefined
       : { rejectUnauthorized: false },
     max: 5,
@@ -35,9 +47,12 @@ function createPool(): Pool {
   });
 }
 
-export const db: Pool | null = dbConfigured
-  ? (globalThis.__wilaPool ??= createPool())
-  : null;
+/** The pool, created on first use. Null when DATABASE_URL isn't set. */
+export function getPool(): Pool | null {
+  const url = connectionString();
+  if (!url) return null;
+  return (globalThis.__wilaPool ??= createPool(url));
+}
 
 /**
  * Run a parameterised query. Always pass values as parameters ($1, $2, …) —
@@ -47,8 +62,9 @@ export async function query<T = any>(
   text: string,
   params: readonly unknown[] = []
 ): Promise<T[]> {
-  if (!db) throw new Error("DATABASE_URL is not set");
-  const res = await db.query(text, params as unknown[]);
+  const pool = getPool();
+  if (!pool) throw new Error("DATABASE_URL is not set");
+  const res = await pool.query(text, params as unknown[]);
   return res.rows as T[];
 }
 

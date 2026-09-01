@@ -1,6 +1,6 @@
 import "server-only";
 
-import { db, query, queryOne, dbConfigured } from "./db";
+import { getPool, query, queryOne, dbConfigured } from "./db";
 import type { EventItem, SpotlightItem } from "./types";
 import type { Role } from "./auth";
 
@@ -309,8 +309,9 @@ export async function deleteUser(id: string): Promise<void> {
  * The new owner is promoted to superadmin if they weren't already.
  */
 export async function transferOwnership(toUserId: string): Promise<void> {
-  if (!db) throw new Error("DATABASE_URL is not set");
-  const client = await db.connect();
+  const pool = getPool();
+  if (!pool) throw new Error("DATABASE_URL is not set");
+  const client = await pool.connect();
   try {
     await client.query("BEGIN");
     await client.query(`UPDATE users SET is_owner = false WHERE is_owner`);

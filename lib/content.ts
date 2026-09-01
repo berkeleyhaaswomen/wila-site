@@ -84,7 +84,7 @@ const FALLBACK_BOARD: BoardMember[] = [
 // ---- Public getters ----------------------------------------------------
 
 export async function getEvents(): Promise<EventItem[]> {
-  if (!dbConfigured) return FALLBACK_EVENTS;
+  if (!dbConfigured()) return FALLBACK_EVENTS;
   try {
     const data = await listEvents();
     return data.length ? data : FALLBACK_EVENTS;
@@ -95,7 +95,7 @@ export async function getEvents(): Promise<EventItem[]> {
 }
 
 export async function getSpotlight(): Promise<SpotlightItem> {
-  if (!dbConfigured) return FALLBACK_SPOTLIGHT;
+  if (!dbConfigured()) return FALLBACK_SPOTLIGHT;
   try {
     const data = await getCurrentSpotlight();
     return data ?? FALLBACK_SPOTLIGHT;

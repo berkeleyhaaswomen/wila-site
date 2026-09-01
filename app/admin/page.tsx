@@ -43,7 +43,7 @@ export default async function AdminHome({
   let userCount = 0;
   let loadError: string | null = null;
 
-  if (dbConfigured) {
+  if (dbConfigured()) {
     try {
       const [events, spotlights] = await Promise.all([
         listEvents(),

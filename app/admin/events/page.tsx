@@ -53,7 +53,7 @@ export default async function EventsPage({
   let past: EventItem[] = [];
   let error: string | null = null;
 
-  if (dbConfigured) {
+  if (dbConfigured()) {
     try {
       const parts = partitionEvents(await listEvents());
       upcoming = parts.upcoming;

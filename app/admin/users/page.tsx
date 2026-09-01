@@ -37,7 +37,7 @@ export default async function UsersPage({
   let users: UserRow[] = [];
   let loadError: string | null = null;
 
-  if (dbConfigured) {
+  if (dbConfigured()) {
     try {
       users = await listUsers();
     } catch (err) {
