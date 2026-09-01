@@ -11,6 +11,13 @@ import BoardStrip from "@/components/BoardStrip";
 import CTA from "@/components/CTA";
 import Footer from "@/components/Footer";
 
+/**
+ * Regenerate periodically as well as on demand. Saving in /admin already calls
+ * revalidatePath, but that only covers edits made through the admin. This is
+ * the safety net for anything that changes the data another way.
+ */
+export const revalidate = 300;
+
 export default function HomePage() {
   return (
     <main className="min-h-screen">
