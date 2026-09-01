@@ -1,7 +1,7 @@
 /** Shared form primitives for the admin site. Plain server components. */
 
 const inputClass =
-  "mt-1.5 w-full rounded-lg border border-black/15 bg-white px-3 py-2 text-sm text-ink " +
+  "mt-1.5 w-full rounded-md border border-black/15 bg-white px-3 py-2 text-sm text-ink " +
   "outline-none transition placeholder:text-ink/35 focus:border-berkeley-blue " +
   "focus:ring-2 focus:ring-berkeley-blue/20 disabled:bg-black/5 disabled:text-ink/50";
 
@@ -164,7 +164,7 @@ export function FormNotice({ message }: { message?: string }) {
 
 export function Card({ children }: { children: React.ReactNode }) {
   return (
-    <div className="rounded-2xl border border-black/5 bg-white p-6 shadow-card md:p-8">
+    <div className="rounded-xl border border-black/10 bg-white p-6 md:p-7">
       {children}
     </div>
   );

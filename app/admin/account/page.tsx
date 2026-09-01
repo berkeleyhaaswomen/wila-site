@@ -31,7 +31,7 @@ export default async function AccountPage() {
         </Card>
 
         <div>
-          <h2 className="mb-4 font-serif text-xl text-ink">Change your password</h2>
+          <h2 className="mb-4 font-display text-sm uppercase tracking-[0.12em] text-ink">Change your password</h2>
           <Card>
             <ChangePasswordForm />
           </Card>

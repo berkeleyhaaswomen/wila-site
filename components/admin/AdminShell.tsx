@@ -28,15 +28,19 @@ export default function AdminShell({
   const links = NAV.filter((n) => !n.superadminOnly || user.role === "superadmin");
 
   return (
-    <div className="min-h-screen">
-      <header className="border-b border-black/10 bg-berkeley-blue text-white">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-3 px-6 py-3">
+    <div className="min-h-screen bg-[#F7F7F4]">
+      <header className="border-b border-black/10 bg-white">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-8 gap-y-3 px-6 py-3.5">
           <Link href="/admin" className="flex items-center gap-2.5">
-            <img src="/wila-mark.png" alt="" aria-hidden="true" className="h-7 w-auto" />
-            <span className="font-serif text-sm font-semibold">WILA Admin</span>
+            <img src="/wila-mark.png" alt="" aria-hidden="true" className="h-6 w-auto" />
+            <span className="font-display text-[13px] uppercase tracking-[0.14em] text-ink">
+              WILA Admin
+            </span>
           </Link>
 
-          <nav className="flex flex-wrap items-center gap-1">
+          {/* Underline rather than filled pills. The bar is a tool, not a
+              landing page, so the active state should be quiet. */}
+          <nav className="flex flex-wrap items-center gap-6">
             {links.map((l) => {
               const active = l.exact ? current === l.href : current.startsWith(l.href);
               return (
@@ -44,10 +48,10 @@ export default function AdminShell({
                   key={l.href}
                   href={l.href}
                   aria-current={active ? "page" : undefined}
-                  className={`rounded-full px-3 py-1.5 text-sm font-medium transition ${
+                  className={`relative py-1 text-[13px] font-medium transition ${
                     active
-                      ? "bg-white/15 text-white"
-                      : "text-white/70 hover:bg-white/10 hover:text-white"
+                      ? "text-ink after:absolute after:inset-x-0 after:-bottom-[15px] after:h-[2px] after:bg-berkeley-blue"
+                      : "text-ink/55 hover:text-ink"
                   }`}
                 >
                   {l.label}
@@ -56,17 +60,17 @@ export default function AdminShell({
             })}
           </nav>
 
-          <div className="ml-auto flex items-center gap-3 text-sm">
-            <span className="hidden text-white/70 sm:inline">
+          <div className="ml-auto flex items-center gap-4 text-[13px]">
+            <span className="hidden items-center gap-2 text-ink/55 sm:flex">
               {user.name || user.email}
-              <span className="ml-2 rounded-full bg-california-gold/20 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-california-gold">
+              <span className="rounded border border-ink/20 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-ink/45">
                 {user.role === "superadmin" ? "Super admin" : "Admin"}
               </span>
             </span>
             <form action={signOut}>
               <button
                 type="submit"
-                className="rounded-full border border-white/30 px-3 py-1.5 text-sm font-medium text-white transition hover:bg-white hover:text-berkeley-blue"
+                className="rounded-md px-2.5 py-1.5 font-medium text-ink/55 transition hover:bg-black/5 hover:text-ink"
               >
                 Sign out
               </button>
@@ -75,17 +79,19 @@ export default function AdminShell({
         </div>
       </header>
 
-      <main className="mx-auto max-w-6xl px-6 py-10">
-        <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
-          <h1 className="font-serif text-3xl tracking-tight text-ink">{title}</h1>
+      <main className="mx-auto max-w-6xl px-6 py-12">
+        <div className="mb-9 flex flex-wrap items-end justify-between gap-4 border-b border-black/10 pb-6">
+          <h1 className="font-display text-[clamp(1.5rem,3vw,2.25rem)] uppercase leading-[0.95] tracking-[-0.015em] text-ink">
+            {title}
+          </h1>
           {action}
         </div>
         {children}
       </main>
 
-      <footer className="mx-auto max-w-6xl px-6 pb-10 text-xs text-ink/45">
-        <Link href="/" className="hover:text-ink/70">
-          ← Back to the public site
+      <footer className="mx-auto max-w-6xl px-6 pb-12 text-xs text-ink/40">
+        <Link href="/" className="transition hover:text-ink/70">
+          Back to the public site
         </Link>
       </footer>
     </div>

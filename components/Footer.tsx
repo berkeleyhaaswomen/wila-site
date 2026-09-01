@@ -4,21 +4,13 @@ export default function Footer() {
     <footer className="bg-ink py-14 text-white/80">
       <div className="container-tight grid gap-10 md:grid-cols-12">
         <div className="md:col-span-5">
-          <div className="flex items-center gap-3">
-            <span className="grid h-9 w-9 place-items-center rounded-lg bg-california-gold">
-              <span className="font-serif text-lg font-bold text-berkeley-blue">
-                W
-              </span>
-            </span>
-            <div className="leading-tight">
-              <div className="font-serif text-base font-semibold text-white">
-                WILA
-              </div>
-              <div className="text-[11px] uppercase tracking-[0.18em] text-white/50">
-                Berkeley Haas
-              </div>
-            </div>
-          </div>
+          <img
+            src="/wila-logo.png"
+            alt="Berkeley Haas WILA, Women in Leadership Alumnae"
+            width={2048}
+            height={1688}
+            className="h-20 w-auto"
+          />
           <p className="mt-5 max-w-sm text-sm leading-relaxed text-white/60">
             Women in Leadership Alumnae is the official women's alumnae network
             of the Haas School of Business, University of California, Berkeley.

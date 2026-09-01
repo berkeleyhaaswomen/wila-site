@@ -57,7 +57,7 @@ export default async function SpotlightsPage({
       </div>
 
       {!error && items.length === 0 && (
-        <div className="mt-6 rounded-2xl border border-dashed border-black/15 bg-white/50 p-10 text-center">
+        <div className="mt-6 rounded-xl border border-dashed border-black/20 bg-white/60 p-12 text-center">
           <p className="text-sm text-ink/60">
             No spotlights yet. The public site is showing its built-in sample
             until you add one.
@@ -77,7 +77,7 @@ export default async function SpotlightsPage({
             <li key={s.id}>
               <Link
                 href={`/admin/spotlights/${s.id}`}
-                className="flex h-full gap-4 rounded-2xl border border-black/5 bg-white p-4 shadow-card transition hover:shadow-soft"
+                className="flex h-full gap-4 rounded-xl border border-black/10 bg-white p-4 transition hover:border-black/25"
               >
                 <div className="h-20 w-16 shrink-0 overflow-hidden rounded-lg bg-soft-gray">
                   {s.photoUrl ? (

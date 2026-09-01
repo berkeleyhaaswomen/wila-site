@@ -20,12 +20,12 @@ function Stat({
   return (
     <Link
       href={href}
-      className="rounded-2xl border border-black/5 bg-white p-6 shadow-card transition hover:shadow-soft"
+      className="rounded-xl border border-black/10 bg-white p-5 transition hover:border-black/25"
     >
-      <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-ink/50">
+      <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-ink/45">
         {label}
       </div>
-      <div className="mt-2 font-serif text-3xl text-berkeley-blue">{value}</div>
+      <div className="mt-2 font-display text-3xl text-ink">{value}</div>
     </Link>
   );
 }
@@ -92,8 +92,8 @@ export default async function AdminHome({
       </div>
 
       <div className="mt-10 grid gap-4 md:grid-cols-2">
-        <div className="rounded-2xl border border-black/5 bg-white p-6 shadow-card">
-          <h2 className="font-serif text-xl text-ink">Add an event</h2>
+        <div className="rounded-xl border border-black/10 bg-white p-6">
+          <h2 className="font-display text-sm uppercase tracking-[0.12em] text-ink">Add an event</h2>
           <p className="mt-2 text-sm leading-relaxed text-ink/70">
             Events sort themselves into Upcoming and Past on the public site
             based on their start time, so you never have to move them by hand.
@@ -106,8 +106,8 @@ export default async function AdminHome({
           </Link>
         </div>
 
-        <div className="rounded-2xl border border-black/5 bg-white p-6 shadow-card">
-          <h2 className="font-serif text-xl text-ink">Rotate the spotlight</h2>
+        <div className="rounded-xl border border-black/10 bg-white p-6">
+          <h2 className="font-display text-sm uppercase tracking-[0.12em] text-ink">Rotate the spotlight</h2>
           <p className="mt-2 text-sm leading-relaxed text-ink/70">
             The homepage shows whichever spotlight has the most recent
             &ldquo;Featured from&rdquo; date. Older ones stay here for reference.

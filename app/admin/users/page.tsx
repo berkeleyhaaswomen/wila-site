@@ -75,7 +75,7 @@ export default async function UsersPage({
         over by the owner.
       </p>
 
-      <div className="mt-6 overflow-x-auto rounded-2xl border border-black/5 bg-white p-2 shadow-card">
+      <div className="mt-6 overflow-x-auto rounded-xl border border-black/10 bg-white p-2">
         <table className="w-full min-w-[720px] text-left">
           <thead>
             <tr className="text-[11px] uppercase tracking-wider text-ink/50">
@@ -179,7 +179,7 @@ export default async function UsersPage({
       </div>
 
       <div className="mt-10 max-w-2xl">
-        <h2 className="mb-4 font-serif text-xl text-ink">Add someone</h2>
+        <h2 className="mb-4 font-display text-sm uppercase tracking-[0.12em] text-ink">Add someone</h2>
         <Card>
           <AddUserForm />
         </Card>

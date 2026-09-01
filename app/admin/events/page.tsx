@@ -95,7 +95,7 @@ export default async function EventsPage({
       </div>
 
       {empty && (
-        <div className="mt-6 rounded-2xl border border-dashed border-black/15 bg-white/50 p-10 text-center">
+        <div className="mt-6 rounded-xl border border-dashed border-black/20 bg-white/60 p-12 text-center">
           <p className="text-sm text-ink/60">
             No events yet. The public site is showing its built-in sample events
             until you add one.
@@ -110,7 +110,7 @@ export default async function EventsPage({
       )}
 
       {(upcoming.length > 0 || past.length > 0) && (
-        <div className="mt-6 overflow-x-auto rounded-2xl border border-black/5 bg-white p-2 shadow-card">
+        <div className="mt-6 overflow-x-auto rounded-xl border border-black/10 bg-white p-2">
           <table className="w-full min-w-[640px] text-left">
             <thead>
               <tr className="text-[11px] uppercase tracking-wider text-ink/50">

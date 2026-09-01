@@ -44,7 +44,7 @@ export default function SpotlightForm({
         <FormError message={state?.error} />
 
         <Card>
-          <h2 className="mb-5 font-serif text-lg text-ink">Who she is</h2>
+          <h2 className="mb-5 font-display text-sm uppercase tracking-[0.12em] text-ink">Who she is</h2>
           <div className="grid gap-5 sm:grid-cols-2">
             <TextField
               name="name"
@@ -76,7 +76,7 @@ export default function SpotlightForm({
         </Card>
 
         <Card>
-          <h2 className="mb-5 font-serif text-lg text-ink">Her words</h2>
+          <h2 className="mb-5 font-display text-sm uppercase tracking-[0.12em] text-ink">Her words</h2>
           <div className="space-y-5">
             <TextArea
               name="quote"
@@ -101,7 +101,7 @@ export default function SpotlightForm({
         </Card>
 
         <Card>
-          <h2 className="mb-5 font-serif text-lg text-ink">Photo &amp; links</h2>
+          <h2 className="mb-5 font-display text-sm uppercase tracking-[0.12em] text-ink">Photo and links</h2>
           <div className="space-y-5">
             <PhotoField
               defaultValue={spotlight?.photoUrl}
@@ -130,7 +130,7 @@ export default function SpotlightForm({
         </Card>
 
         <Card>
-          <h2 className="mb-5 font-serif text-lg text-ink">Card details</h2>
+          <h2 className="mb-5 font-display text-sm uppercase tracking-[0.12em] text-ink">Card details</h2>
           <div className="grid gap-5 sm:grid-cols-2">
             <TextField
               name="spotlightLabel"
