@@ -1,25 +1,29 @@
 import Nav from "@/components/Nav";
 import LogoWatermark from "@/components/LogoWatermark";
+import ScrollProgress from "@/components/ScrollProgress";
+import Mentorship from "@/components/Mentorship";
 import ScrollHero from "@/components/ScrollHero";
 import About from "@/components/About";
-import Pillars from "@/components/Pillars";
+import PinnedPillars from "@/components/PinnedPillars";
 import Events from "@/components/Events";
 import Spotlight from "@/components/Spotlight";
-import Leadership from "@/components/Leadership";
+import BoardStrip from "@/components/BoardStrip";
 import CTA from "@/components/CTA";
 import Footer from "@/components/Footer";
 
 export default function HomePage() {
   return (
     <main className="min-h-screen">
+      <ScrollProgress />
       <LogoWatermark />
       <Nav />
       <ScrollHero />
       <About />
-      <Pillars />
+      <PinnedPillars />
       <Events />
+      <Mentorship />
       <Spotlight />
-      <Leadership />
+      <BoardStrip />
       <CTA />
       <Footer />
     </main>

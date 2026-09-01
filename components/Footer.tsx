@@ -22,11 +22,11 @@ export default function Footer() {
             Explore
           </div>
           <ul className="mt-4 space-y-2 text-sm">
-            <li><a className="hover:text-white" href="#about">About</a></li>
-            <li><a className="hover:text-white" href="#pillars">Pillars</a></li>
-            <li><a className="hover:text-white" href="#events">Events</a></li>
-            <li><a className="hover:text-white" href="#spotlight">Spotlight</a></li>
-            <li><a className="hover:text-white" href="#leadership">Leadership</a></li>
+            <li><a className="transition hover:text-white" href="/about">About</a></li>
+            <li><a className="transition hover:text-white" href="/#events">Events</a></li>
+            <li><a className="transition hover:text-white" href="/photos">Photos</a></li>
+            <li><a className="transition hover:text-white" href="/board">Board</a></li>
+            <li><a className="transition hover:text-white" href="/#spotlight">Spotlight</a></li>
           </ul>
         </div>
 

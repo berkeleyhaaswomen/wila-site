@@ -52,22 +52,6 @@ const FALLBACK_EVENTS: EventItem[] = [
   }
 ];
 
-const FALLBACK_SPOTLIGHT: SpotlightItem = {
-  name: "Priya Ramanathan",
-  gradYear: "MBA ’14",
-  title: "VP of Product, Lumen Health",
-  spotlightLabel: "Q2 2026 Spotlight",
-  quote:
-    "“The most useful thing Haas gave me wasn’t a framework. It was permission. Permission to ask the uncomfortable question in the room, to change my mind in public, to build a career that looks nothing like the one I drew up at 24. WILA is where I keep practicing that permission. Every time I show up, someone nudges me to go bigger than I planned to.”",
-  bio:
-    "Priya leads the product org at Lumen Health, a Series C startup rethinking maternal and family care. Before Lumen she spent seven years at a major health system, where she launched one of the first telehealth programs on the West Coast. She mentors two WILA members each year and co-chairs our Bay Area chapter.",
-  linkedin: "https://www.linkedin.com/",
-  pillar: "Student Always",
-  chapter: "Bay Area",
-  mentorCohort: "2024 – present",
-  nominateUrl: "#contact"
-};
-
 const FALLBACK_BOARD: BoardMember[] = [
   { name: "Tricia Tran", role: "Founding Co-President & Advisor", linkedin: "https://www.linkedin.com/in/triciatranbayarea/" },
   { name: "Abha Bhagat", role: "Founding Co-President", linkedin: "https://www.linkedin.com/in/abhabhagat/" },
@@ -94,14 +78,19 @@ export async function getEvents(): Promise<EventItem[]> {
   }
 }
 
-export async function getSpotlight(): Promise<SpotlightItem> {
-  if (!dbConfigured()) return FALLBACK_SPOTLIGHT;
+/**
+ * Returns null when no spotlight has been published. There is deliberately no
+ * placeholder person: inventing an alumna and presenting her as a real member
+ * of this network would be a lie on a public site, so the section shows an
+ * invitation to nominate instead.
+ */
+export async function getSpotlight(): Promise<SpotlightItem | null> {
+  if (!dbConfigured()) return null;
   try {
-    const data = await getCurrentSpotlight();
-    return data ?? FALLBACK_SPOTLIGHT;
+    return await getCurrentSpotlight();
   } catch (err) {
-    console.warn("[content] spotlight query failed, using fallback:", err);
-    return FALLBACK_SPOTLIGHT;
+    console.warn("[content] spotlight query failed:", err);
+    return null;
   }
 }
 

@@ -17,9 +17,9 @@ import { useEffect, useRef, useState } from "react";
 
 const STAGES = [
   { at: 0.06, kicker: "Berkeley Haas", line: "Women in\nLeadership" },
-  { at: 0.34, kicker: "1,200 alumnae", line: "A network\nthat shows up" },
-  { at: 0.62, kicker: "Twelve chapters", line: "Across the\nworld" },
-  { at: 0.86, kicker: "Since 2010", line: "Welcome\nto WILA" }
+  { at: 0.34, kicker: "Worldwide network", line: "A community\nthat shows up" },
+  { at: 0.62, kicker: "Four pillars", line: "Principles\ninto practice" },
+  { at: 0.86, kicker: "Founded 2021", line: "Welcome\nto WILA" }
 ];
 
 /** Smoothstep. Softens the ends of every transition. */
