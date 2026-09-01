@@ -4,11 +4,17 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 /**
- * The full WILA lockup, pinned to the top left for the whole scroll so it
- * floats over the canvas animation.
+ * The WILA lockup, pinned to the top left for the whole scroll so it floats
+ * over the canvas animation.
  *
- * It shrinks once you leave the hero, so it stays present without competing
- * with the page content underneath.
+ * It shares the nav's container and bar height rather than carrying its own
+ * offsets, so it lines up with the links on the right by construction. The
+ * previous version positioned itself with left/top values that had to be kept
+ * in step with the nav by hand, and at 96px tall it overflowed the 80px bar
+ * and sat visibly low.
+ *
+ * The wrapper ignores pointer events so it never steals clicks from the nav
+ * across the full width; only the logo itself is clickable.
  */
 export default function LogoWatermark() {
   const [shrunk, setShrunk] = useState(false);
@@ -21,21 +27,25 @@ export default function LogoWatermark() {
   }, []);
 
   return (
-    <Link
-      href="/"
-      aria-label="WILA, Berkeley Haas Women in Leadership Alumnae"
-      className="fixed left-5 top-4 z-[60] block transition-all duration-500 md:left-8 md:top-6"
-    >
-      <img
-        src="/wila-logo.png"
-        alt=""
-        aria-hidden="true"
-        width={2048}
-        height={1688}
-        className={`w-auto drop-shadow-[0_8px_30px_rgba(0,10,30,0.45)] transition-all duration-500 ${
-          shrunk ? "h-9 opacity-90 md:h-14" : "h-12 opacity-100 md:h-24"
-        }`}
-      />
-    </Link>
+    <div className="pointer-events-none fixed inset-x-0 top-0 z-[60]">
+      <div className="container-wide flex h-16 items-center md:h-20">
+        <Link
+          href="/"
+          aria-label="WILA, Berkeley Haas Women in Leadership Alumnae"
+          className="pointer-events-auto inline-block"
+        >
+          <img
+            src="/wila-logo.png"
+            alt=""
+            aria-hidden="true"
+            width={2048}
+            height={1688}
+            className={`w-auto drop-shadow-[0_8px_30px_rgba(0,10,30,0.45)] transition-all duration-500 ${
+              shrunk ? "h-9 opacity-90 md:h-11" : "h-11 opacity-100 md:h-16"
+            }`}
+          />
+        </Link>
+      </div>
+    </div>
   );
 }
