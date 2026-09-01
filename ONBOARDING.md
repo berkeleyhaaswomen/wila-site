@@ -77,6 +77,11 @@ The homepage always shows whichever spotlight has the most recent "Featured
 from" date. The one currently live is tagged **On the homepage** in the list.
 Older ones stay for reference.
 
+**Look up who has joined** (super admins only)
+Members lists everyone who signed up at /join. Check the Verify link against
+their LinkedIn profile before adding them to a mailing list, then use Export
+to get their addresses. Copy every email gives you a BCC-ready list.
+
 **Add a spotlight photo**
 On the spotlight form, either click **Upload a photo** and pick a file from
 your computer, or paste a link into the box next to it. Straight from your

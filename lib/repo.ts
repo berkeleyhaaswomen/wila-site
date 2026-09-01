@@ -338,3 +338,81 @@ export async function countSuperadmins(): Promise<number> {
   );
   return Number(row?.n ?? 0);
 }
+
+// ---- members -----------------------------------------------------------
+
+export type MemberRow = {
+  id: string;
+  name: string;
+  email: string;
+  gradYear: string | null;
+  program: string | null;
+  linkedin: string | null;
+  createdAt: string;
+};
+
+function toMember(r: any): MemberRow {
+  return {
+    id: r.id,
+    name: r.name,
+    email: r.email,
+    gradYear: r.grad_year ?? null,
+    program: r.program ?? null,
+    linkedin: r.linkedin ?? null,
+    createdAt:
+      r.created_at instanceof Date ? r.created_at.toISOString() : r.created_at
+  };
+}
+
+export async function listMembers(): Promise<MemberRow[]> {
+  const rows = await query(
+    `SELECT id, name, email, grad_year, program, linkedin, created_at
+     FROM members ORDER BY created_at DESC`
+  );
+  return rows.map(toMember);
+}
+
+export type MemberInput = {
+  name: string;
+  email: string;
+  gradYear?: string | null;
+  program?: string | null;
+  linkedin?: string | null;
+};
+
+/**
+ * Records a signup. Re-submitting the same address updates the details rather
+ * than failing, so someone correcting a typo in their own entry is not told
+ * they are already a member.
+ */
+export async function upsertMember(input: MemberInput): Promise<MemberRow> {
+  const row = await queryOne(
+    `INSERT INTO members (name, email, grad_year, program, linkedin)
+     VALUES ($1, $2, $3, $4, $5)
+     ON CONFLICT (lower(email)) DO UPDATE
+       SET name = EXCLUDED.name,
+           grad_year = COALESCE(EXCLUDED.grad_year, members.grad_year),
+           program = COALESCE(EXCLUDED.program, members.program),
+           linkedin = COALESCE(EXCLUDED.linkedin, members.linkedin)
+     RETURNING id, name, email, grad_year, program, linkedin, created_at`,
+    [
+      input.name,
+      input.email,
+      input.gradYear || null,
+      input.program || null,
+      input.linkedin || null
+    ]
+  );
+  return toMember(row);
+}
+
+export async function deleteMember(id: string): Promise<void> {
+  await query(`DELETE FROM members WHERE id = $1`, [id]);
+}
+
+export async function countMembers(): Promise<number> {
+  const row = await queryOne<{ n: string }>(
+    `SELECT count(*)::text AS n FROM members`
+  );
+  return Number(row?.n ?? 0);
+}

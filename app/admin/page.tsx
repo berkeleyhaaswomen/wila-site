@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import { requireUser } from "@/lib/auth";
 import { dbConfigured } from "@/lib/db";
-import { listEvents, listSpotlights, listUsers } from "@/lib/repo";
+import { listEvents, listSpotlights, listUsers, countMembers } from "@/lib/repo";
 import AdminShell from "@/components/admin/AdminShell";
 import { partitionEvents } from "@/lib/format";
 
@@ -41,6 +41,7 @@ export default async function AdminHome({
   let pastCount = 0;
   let spotlightCount = 0;
   let userCount = 0;
+  let memberCount = 0;
   let loadError: string | null = null;
 
   if (dbConfigured()) {
@@ -53,7 +54,10 @@ export default async function AdminHome({
       upcomingCount = upcoming.length;
       pastCount = past.length;
       spotlightCount = spotlights.length;
-      if (user.role === "superadmin") userCount = (await listUsers()).length;
+      if (user.role === "superadmin") {
+        userCount = (await listUsers()).length;
+        memberCount = await countMembers();
+      }
     } catch (err) {
       loadError = err instanceof Error ? err.message : String(err);
     }
@@ -66,8 +70,9 @@ export default async function AdminHome({
           role="alert"
           className="mb-6 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900"
         >
-          Managing users is limited to super admins. Ask one of them if you need
-          someone added or removed.
+          That area is limited to super admins. Members and website managers
+          both hold personal details, so access is kept narrow. Ask a super
+          admin if you need something there.
         </div>
       )}
 
@@ -82,10 +87,13 @@ export default async function AdminHome({
         </div>
       )}
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
         <Stat label="Upcoming events" value={upcomingCount} href="/admin/events" />
         <Stat label="Past events" value={pastCount} href="/admin/events" />
         <Stat label="Spotlights" value={spotlightCount} href="/admin/spotlights" />
+        {user.role === "superadmin" && (
+          <Stat label="Members" value={memberCount} href="/admin/members" />
+        )}
         {user.role === "superadmin" && (
           <Stat label="Website managers" value={userCount} href="/admin/users" />
         )}

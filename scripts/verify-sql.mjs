@@ -301,6 +301,58 @@ await step("a spotlight with no featured_from sorts last, not first", async () =
   }
 });
 
+console.log("\nmembers");
+let memberId;
+await step("record a signup", async () => {
+  const r = await db.query(
+    `INSERT INTO members (name, email, grad_year, program, linkedin)
+     VALUES ($1,$2,$3,$4,$5) RETURNING id`,
+    ["Jane Doe", "Jane.Doe@Example.com", "2018", "Full-time MBA", "https://www.linkedin.com/in/janedoe"]
+  );
+  memberId = r.rows[0].id;
+});
+await step("the same address again updates rather than duplicating", async () => {
+  await db.query(
+    `INSERT INTO members (name, email, grad_year, program, linkedin)
+     VALUES ($1,$2,$3,$4,$5)
+     ON CONFLICT (lower(email)) DO UPDATE
+       SET name = EXCLUDED.name,
+           grad_year = COALESCE(EXCLUDED.grad_year, members.grad_year),
+           program = COALESCE(EXCLUDED.program, members.program),
+           linkedin = COALESCE(EXCLUDED.linkedin, members.linkedin)`,
+    ["Jane D", "jane.doe@example.com", "2019", null, null]
+  );
+  const r = await db.query(`SELECT name, grad_year, program FROM members`);
+  if (r.rows.length !== 1) throw new Error(`expected 1 row, got ${r.rows.length}`);
+  if (r.rows[0].name !== "Jane D") throw new Error("name not updated");
+  if (r.rows[0].grad_year !== "2019") throw new Error("grad year not updated");
+  if (r.rows[0].program !== "Full-time MBA") {
+    throw new Error("a null in the new row wiped an existing value");
+  }
+});
+await step("listMembers returns newest first", async () => {
+  await db.query(
+    `INSERT INTO members (name, email) VALUES ($1,$2)`,
+    ["Newer Person", "newer@example.com"]
+  );
+  const r = await db.query(
+    `SELECT name, email, grad_year, program, linkedin, created_at
+     FROM members ORDER BY created_at DESC`
+  );
+  if (r.rows.length !== 2) throw new Error(`expected 2 rows, got ${r.rows.length}`);
+});
+await step("name and email are required", async () => {
+  try {
+    await db.query(`INSERT INTO members (name) VALUES ('No Email')`);
+  } catch {
+    return;
+  }
+  throw new Error("a member without an email was allowed");
+});
+await step("deleteMember", async () => {
+  await db.query(`DELETE FROM members`);
+});
+
 console.log("\nimages");
 let imageId;
 await step("insert an image and read the bytes back", async () => {

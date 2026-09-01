@@ -110,6 +110,29 @@ CREATE TABLE IF NOT EXISTS images (
   created_at timestamptz NOT NULL DEFAULT now()
 );
 
+-- -------------------------------------------------------------- members ----
+-- People who asked to join the network through the public form.
+--
+-- This is the only table holding personal data from outside the board, so it
+-- is deliberately small: enough to verify someone is a Haas alumna and to
+-- email them, and nothing else.
+CREATE TABLE IF NOT EXISTS members (
+  id         uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  name       text NOT NULL,
+  email      text NOT NULL,
+  grad_year  text,
+  program    text,
+  linkedin   text,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now()
+);
+
+-- One signup per person. Case-insensitive, so Jane@ and jane@ are the same.
+CREATE UNIQUE INDEX IF NOT EXISTS members_email_lower_idx
+  ON members (lower(email));
+
+CREATE INDEX IF NOT EXISTS members_created_at_idx ON members (created_at DESC);
+
 -- ------------------------------------------------------------ updated_at ---
 CREATE OR REPLACE FUNCTION set_updated_at() RETURNS trigger AS $$
 BEGIN
@@ -121,7 +144,7 @@ $$ LANGUAGE plpgsql;
 DO $$
 DECLARE t text;
 BEGIN
-  FOREACH t IN ARRAY ARRAY['users', 'events', 'spotlights'] LOOP
+  FOREACH t IN ARRAY ARRAY['users', 'events', 'spotlights', 'members'] LOOP
     EXECUTE format(
       'DROP TRIGGER IF EXISTS %I ON %I', t || '_set_updated_at', t
     );

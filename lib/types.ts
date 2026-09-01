@@ -51,3 +51,27 @@ export type BoardMember = {
   photoUrl?: string;
   isDraft?: boolean;
 };
+
+/** Berkeley Haas degree programs, for the membership form. */
+export const HAAS_PROGRAMS = [
+  "Full-time MBA",
+  "Evening & Weekend MBA (EWMBA)",
+  "MBA for Executives (EMBA)",
+  "Master of Financial Engineering (MFE)",
+  "Undergraduate (BS)",
+  "PhD",
+  "Berkeley MBA for Executives / dual degree",
+  "Other Berkeley program"
+] as const;
+
+/** Every exportable member field, and how to label it in a spreadsheet. */
+export const MEMBER_FIELDS = [
+  { key: "name", label: "Name" },
+  { key: "email", label: "Email" },
+  { key: "gradYear", label: "Graduation year" },
+  { key: "program", label: "Program" },
+  { key: "linkedin", label: "LinkedIn" },
+  { key: "createdAt", label: "Signed up" }
+] as const;
+
+export type MemberField = (typeof MEMBER_FIELDS)[number]["key"];

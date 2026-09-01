@@ -32,7 +32,7 @@ export default function Mentorship() {
             alumni community who are ready to guide your professional journey.
           </p>
           <a
-            href="#contact"
+            href="/join"
             className="group mt-9 inline-flex items-center gap-3 rounded-full bg-california-gold px-7 py-3.5 text-sm font-semibold text-ink transition hover:bg-white"
           >
             Find a mentor

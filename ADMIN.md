@@ -209,6 +209,33 @@ tagged "On the homepage".
 Any field you leave blank is omitted from the card rather than rendering an
 empty row, so a half-filled spotlight still looks intentional.
 
+### Members and mailing lists
+
+People join through the public form at **/join**, which asks for name, email,
+graduation year, program, and a LinkedIn profile. The LinkedIn link is the
+proof of affiliation: check it before adding anyone to a mailing list.
+
+**Members** in the admin nav lists everyone who has signed up, newest first,
+with a Verify link straight to each profile. The page is **super admin only**,
+because it is the one place holding personal details collected from outside
+the board.
+
+To send an email:
+
+1. Tick the columns you want under **Export**
+2. **Copy every email** puts a comma-separated list on your clipboard, ready
+   for the BCC field. Use BCC rather than To, so members cannot see each
+   other's addresses
+3. Or **Download CSV** for a spreadsheet, or **Copy rows** to paste straight
+   into Google Sheets or Excel as columns
+
+The export runs entirely in your browser from rows already on the page, so
+there is no endpoint anyone could call to pull the member list.
+
+Someone signing up twice with the same address updates their own entry rather
+than creating a duplicate, so a person fixing their own typo is not told they
+are already a member.
+
 ### Change your own password
 
 **Account → Change your password.** Requires your current password.
