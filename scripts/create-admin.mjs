@@ -98,11 +98,11 @@ try {
     (await ask("Role: [1] superadmin, [2] admin (default 1): ")) || "1";
   const role = roleAnswer === "2" ? "admin" : "superadmin";
 
-  const password = await ask("Password (min 12 chars, hidden): ", {
+  const password = await ask("Password (min 8 chars, hidden): ", {
     hidden: true
   });
-  if (password.length < 12) {
-    throw new Error("Password must be at least 12 characters.");
+  if (password.length < 8) {
+    throw new Error("Password must be at least 8 characters.");
   }
 
   const confirm = await ask("Confirm password: ", { hidden: true });

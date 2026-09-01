@@ -50,11 +50,20 @@ export async function verifyPassword(
 }
 
 /**
- * Minimum bar for admin passwords. Deliberately modest, since length does the real
- * work, and rules people can't satisfy just push them toward "Password1!".
+ * Minimum length for admin passwords.
+ *
+ * Length is what actually resists guessing, so this is the one rule worth
+ * having; character-class requirements mostly push people toward "Password1!".
+ * Eight is short for an unthrottled login form, which this still is, so rate
+ * limiting is the next thing worth adding here.
  */
+export const MIN_PASSWORD_LENGTH = 8;
+
+/** Returns a message when the password is unusable, or null when it is fine. */
 export function passwordProblem(plain: string): string | null {
-  if (plain.length < 12) return "Password must be at least 12 characters.";
+  if (plain.length < MIN_PASSWORD_LENGTH) {
+    return `Password must be at least ${MIN_PASSWORD_LENGTH} characters.`;
+  }
   if (plain.length > 200) return "Password must be under 200 characters.";
   return null;
 }

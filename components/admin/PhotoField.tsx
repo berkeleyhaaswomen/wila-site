@@ -114,13 +114,12 @@ export default function PhotoField({
 
           {!uploadsEnabled && (
             <p className="text-xs text-ink/50">
-              File uploads are off until <code className="font-mono">BLOB_READ_WRITE_TOKEN</code>{" "}
-              is set. You can still paste an image URL.
+              File uploads need a database. You can still paste an image URL.
             </p>
           )}
           {error && <p className="text-xs text-red-700">{error}</p>}
           <p className="text-xs text-ink/45">
-            Portrait orientation works best, roughly 800×1000, under 5 MB.
+            Portrait orientation works best. Large photos are resized automatically.
           </p>
         </div>
       </div>

@@ -93,8 +93,7 @@ npm run admin:create
 
 It asks for an email, a display name, a role, and a password. **The password
 prompt is hidden**: nothing is echoed to your terminal, written to your shell
-history, or stored in this repo. Use a strong one; the minimum is 12
-characters.
+history, or stored in this repo. Use a strong one; the minimum is 8 characters.
 
 After this, super admins add everyone else from `/admin/users`, you shouldn't
 need this script again except to recover a locked-out account.
@@ -114,17 +113,21 @@ Run the migration once against the production database too, either set
 `DATABASE_URL` locally to the production string and run `npm run db:migrate`,
 or run it from the provider's SQL console by pasting in `db/schema.sql`.
 
-### 6. Photo uploads (optional)
+### 6. Photo uploads
 
-To let admins upload spotlight photos from their computer rather than pasting
-a URL:
+Nothing to do. Uploads work as soon as the database is connected: the photo is
+rotated upright, capped at 1600px on its long edge, re-encoded as JPEG, and
+stored in the `images` table. A 12MP phone photo lands at roughly 200KB. It is
+served back from `/api/images/<id>` with a one-year immutable cache, so each
+photo is fetched once per visitor.
 
-1. Vercel dashboard → **Storage** → **Create** → **Blob**
-2. Copy the store's **Read/Write Token**
-3. Add it as `BLOB_READ_WRITE_TOKEN` in both `.env.local` and Vercel
+Admins can still paste a URL instead if the photo is already hosted somewhere.
 
-Without it everything still works, the upload button is disabled and admins
-paste an image URL instead.
+**If you would rather use a CDN**, create a Vercel Blob store (Vercel dashboard
+→ Storage → Create → Blob), copy its Read/Write Token, and add it as
+`BLOB_READ_WRITE_TOKEN`. The upload route prefers Blob whenever that variable
+is set, and the `images` table simply stops growing. Photos already in the
+database keep working.
 
 ### 7. Point the domain
 

@@ -38,7 +38,7 @@ export default function AddUserForm() {
         <TextField
           name="password"
           label="Temporary password"
-          hint="at least 12 characters"
+          hint="at least 8 characters"
           type="password"
           required
         />

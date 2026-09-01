@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 
 import { requireUser } from "@/lib/auth";
+import { dbConfigured } from "@/lib/db";
 import { getSpotlightById } from "@/lib/repo";
 import AdminShell from "@/components/admin/AdminShell";
 import SpotlightForm from "@/components/admin/SpotlightForm";
@@ -20,7 +21,7 @@ export default async function EditSpotlightPage({
     <AdminShell user={user} current="/admin/spotlights" title="Edit spotlight">
       <SpotlightForm
         spotlight={spotlight}
-        uploadsEnabled={Boolean(process.env.BLOB_READ_WRITE_TOKEN)}
+        uploadsEnabled={dbConfigured() || Boolean(process.env.BLOB_READ_WRITE_TOKEN)}
       />
     </AdminShell>
   );

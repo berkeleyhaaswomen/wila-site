@@ -52,7 +52,7 @@ export default function SpotlightForm({
               required
               maxLength={120}
               defaultValue={spotlight?.name}
-              placeholder="Priya Ramanathan"
+              placeholder="Her full name"
             />
             <TextField
               name="gradYear"
@@ -60,7 +60,7 @@ export default function SpotlightForm({
               hint="optional"
               maxLength={40}
               defaultValue={spotlight?.gradYear}
-              placeholder="MBA ’14"
+              placeholder="MBA ’18"
             />
             <div className="sm:col-span-2">
               <TextField
@@ -69,7 +69,7 @@ export default function SpotlightForm({
                 hint="the big headline on the card"
                 maxLength={160}
                 defaultValue={spotlight?.title}
-                placeholder="VP of Product, Lumen Health"
+                placeholder="Her role and company"
               />
             </div>
           </div>
@@ -86,7 +86,7 @@ export default function SpotlightForm({
               maxLength={1200}
               defaultValue={spotlight?.quote}
               hint="shown as the pull quote, include the curly quotation marks"
-              placeholder="“The most useful thing Haas gave me wasn’t a framework. It was permission…”"
+              placeholder="A few sentences in her own voice, with the curly quotation marks."
             />
             <TextArea
               name="bio"
@@ -95,7 +95,7 @@ export default function SpotlightForm({
               rows={4}
               maxLength={1500}
               defaultValue={spotlight?.bio}
-              placeholder="Priya leads the product org at Lumen Health…"
+              placeholder="A short third-person bio: what she does now, and how she is involved in WILA."
             />
           </div>
         </Card>

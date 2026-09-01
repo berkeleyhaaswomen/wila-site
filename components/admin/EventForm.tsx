@@ -45,7 +45,7 @@ export default function EventForm({ event }: { event?: EventItem }) {
               required
               maxLength={160}
               defaultValue={event?.title}
-              placeholder="Reclaim Your Ambitions: A Sustainable Approach to Thriving"
+              placeholder="The event title as it should appear on the site"
             />
             <TextField
               name="slug"

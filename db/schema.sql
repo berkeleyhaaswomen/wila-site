@@ -92,6 +92,24 @@ CREATE TABLE IF NOT EXISTS spotlights (
 CREATE INDEX IF NOT EXISTS spotlights_featured_from_idx
   ON spotlights (featured_from DESC NULLS LAST);
 
+-- --------------------------------------------------------------- images ----
+-- Uploaded photographs, stored in the database.
+--
+-- Vercel Blob would be the more conventional home, but it needs a separate
+-- store and another credential to keep track of. Spotlight photos are a
+-- handful of files a year, resized to at most 1600px before they land here,
+-- so a few hundred kilobytes each is well inside a free Postgres tier. If
+-- BLOB_READ_WRITE_TOKEN is ever set the upload route prefers Blob instead and
+-- this table simply stops growing.
+CREATE TABLE IF NOT EXISTS images (
+  id         uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  mime       text NOT NULL,
+  width      integer NOT NULL,
+  height     integer NOT NULL,
+  bytes      bytea NOT NULL,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+
 -- ------------------------------------------------------------ updated_at ---
 CREATE OR REPLACE FUNCTION set_updated_at() RETURNS trigger AS $$
 BEGIN

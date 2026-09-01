@@ -35,7 +35,7 @@ export default function ChangePasswordForm() {
       <TextField
         name="next"
         label="New password"
-        hint="at least 12 characters"
+        hint="at least 8 characters"
         type="password"
         required
       />

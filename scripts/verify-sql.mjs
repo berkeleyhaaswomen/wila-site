@@ -301,6 +301,35 @@ await step("a spotlight with no featured_from sorts last, not first", async () =
   }
 });
 
+console.log("\nimages");
+let imageId;
+await step("insert an image and read the bytes back", async () => {
+  const payload = new Uint8Array([255, 216, 255, 0, 1, 2, 3, 4]);
+  const r = await db.query(
+    `INSERT INTO images (mime, width, height, bytes)
+     VALUES ($1,$2,$3,$4) RETURNING id`,
+    ["image/jpeg", 1600, 1067, payload]
+  );
+  imageId = r.rows[0].id;
+  const back = await db.query(`SELECT mime, width, height, bytes FROM images WHERE id = $1`, [imageId]);
+  const row = back.rows[0];
+  if (row.mime !== "image/jpeg") throw new Error("mime not round-tripped");
+  if (row.width !== 1600 || row.height !== 1067) throw new Error("dimensions not round-tripped");
+  const bytes = Uint8Array.from(row.bytes);
+  if (bytes.length !== payload.length || bytes[0] !== 255 || bytes[7] !== 4) {
+    throw new Error(`bytes not round-tripped (got ${bytes.length} bytes)`);
+  }
+});
+await step("a missing id returns nothing rather than erroring", async () => {
+  const r = await db.query(
+    `SELECT mime FROM images WHERE id = '00000000-0000-0000-0000-000000000000'`
+  );
+  if (r.rows.length !== 0) throw new Error("expected no rows");
+});
+await step("deleteImage", async () => {
+  await db.query(`DELETE FROM images WHERE id = $1`, [imageId]);
+});
+
 console.log("\ndeletes");
 await step("deleteEvent", async () => {
   await db.query(`DELETE FROM events WHERE id = $1`, [eventId]);

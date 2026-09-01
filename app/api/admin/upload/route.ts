@@ -1,24 +1,28 @@
 import { NextResponse } from "next/server";
-import { put } from "@vercel/blob";
 
 import { getSessionUser } from "@/lib/auth";
+import { dbConfigured } from "@/lib/db";
+import { storeImage, blobConfigured } from "@/lib/images";
 
 export const runtime = "nodejs";
 
-const MAX_BYTES = 5 * 1024 * 1024; // 5 MB
+const MAX_BYTES = 12 * 1024 * 1024; // before resizing; phone photos are large
 const ALLOWED = new Set([
   "image/jpeg",
   "image/png",
   "image/webp",
   "image/avif",
-  "image/gif"
+  "image/gif",
+  "image/heic",
+  "image/heif"
 ]);
 
 /**
- * Uploads a spotlight photo to Vercel Blob and returns its public URL.
+ * Uploads a spotlight photo and returns a URL to display it.
  *
- * Signed-in admins only. An open upload endpoint would let anyone use the
- * blob store as free file hosting.
+ * Signed-in admins only. An open upload endpoint would let anyone fill the
+ * store, and on the database backend that means anyone could fill the
+ * database.
  */
 export async function POST(request: Request) {
   const user = await getSessionUser();
@@ -26,12 +30,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Not signed in." }, { status: 401 });
   }
 
-  if (!process.env.BLOB_READ_WRITE_TOKEN) {
+  if (!blobConfigured() && !dbConfigured()) {
     return NextResponse.json(
-      {
-        error:
-          "Uploads aren't configured. Set BLOB_READ_WRITE_TOKEN, or paste an image URL instead."
-      },
+      { error: "No storage is configured. Paste an image URL instead." },
       { status: 501 }
     );
   }
@@ -42,36 +43,27 @@ export async function POST(request: Request) {
   if (!(file instanceof File)) {
     return NextResponse.json({ error: "No file received." }, { status: 400 });
   }
-  if (!ALLOWED.has(file.type)) {
+  if (file.type && !ALLOWED.has(file.type)) {
     return NextResponse.json(
-      { error: "Use a JPEG, PNG, WebP, AVIF, or GIF image." },
+      { error: "Use a JPEG, PNG, WebP, AVIF, HEIC, or GIF image." },
       { status: 415 }
     );
   }
   if (file.size > MAX_BYTES) {
     return NextResponse.json(
-      { error: "That image is over 5 MB. Please resize it and try again." },
+      { error: "That image is over 12 MB. Please pick a smaller one." },
       { status: 413 }
     );
   }
 
-  // Ignore any client-supplied path; keep the extension only.
-  const ext = (file.name.split(".").pop() ?? "jpg")
-    .toLowerCase()
-    .replace(/[^a-z0-9]/g, "")
-    .slice(0, 5);
-
   try {
-    const blob = await put(`spotlights/photo.${ext}`, file, {
-      access: "public",
-      addRandomSuffix: true,
-      contentType: file.type
-    });
-    return NextResponse.json({ url: blob.url });
+    const input = Buffer.from(await file.arrayBuffer());
+    const stored = await storeImage(input);
+    return NextResponse.json(stored);
   } catch (err) {
-    console.error("[admin] blob upload failed:", err);
+    console.error("[admin] image upload failed:", err);
     return NextResponse.json(
-      { error: "Upload failed. Try again, or paste an image URL instead." },
+      { error: "Could not read that image. Try a different file." },
       { status: 500 }
     );
   }

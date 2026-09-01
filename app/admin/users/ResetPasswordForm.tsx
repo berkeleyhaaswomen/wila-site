@@ -48,7 +48,7 @@ export default function ResetPasswordForm({
           name="password"
           type="password"
           required
-          minLength={12}
+          minLength={8}
           aria-label={`New password for ${label}`}
           placeholder="New password"
           className="w-36 rounded-lg border border-black/15 px-2 py-1 text-sm"

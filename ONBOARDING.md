@@ -20,7 +20,7 @@ you.
 
 Click **Account** in the top nav → **Change your password**. Your temporary
 password was shared with you by another person, so treat it as compromised
-from day one. Pick something at least 12 characters that you don't use
+from day one. Pick something at least 8 characters that you don't use
 anywhere else.
 
 ---
@@ -79,9 +79,9 @@ Older ones stay for reference.
 
 **Add a spotlight photo**
 On the spotlight form, either click **Upload a photo** and pick a file from
-your computer, or paste a link into the box next to it. Portrait orientation
-works best, roughly 800×1000, under 5 MB. If you skip it, the card falls back
-to the illustrated placeholder, which looks fine.
+your computer, or paste a link into the box next to it. Straight from your
+phone is fine: photos are rotated upright and resized automatically. Portrait
+orientation looks best on the card.
 
 ---
 
