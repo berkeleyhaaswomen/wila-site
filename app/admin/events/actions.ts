@@ -13,6 +13,7 @@ import {
   type EventInput
 } from "@/lib/repo";
 import { slugify } from "@/lib/slug";
+import { pacificInputToISO } from "@/lib/format";
 
 export type EventFormState = { error?: string };
 
@@ -61,8 +62,9 @@ function toInput(v: z.infer<typeof schema>): EventInput {
   return {
     title: v.title,
     slug: v.slug,
-    startsAt: new Date(v.startsAt).toISOString(),
-    endsAt: v.endsAt ? new Date(v.endsAt).toISOString() : null,
+    // Form times are Pacific wall-clock, not the server's zone.
+    startsAt: pacificInputToISO(v.startsAt)!,
+    endsAt: v.endsAt ? pacificInputToISO(v.endsAt) : null,
     location: v.location,
     format: v.format,
     price: v.price || null,
@@ -90,10 +92,10 @@ export async function saveEvent(
     return { error: parsed.error.issues[0]?.message ?? "Please check the form." };
   }
 
-  if (Number.isNaN(new Date(parsed.data.startsAt).getTime())) {
+  if (!pacificInputToISO(parsed.data.startsAt)) {
     return { error: "Start date and time isn't a valid date." };
   }
-  if (parsed.data.endsAt && Number.isNaN(new Date(parsed.data.endsAt).getTime())) {
+  if (parsed.data.endsAt && !pacificInputToISO(parsed.data.endsAt)) {
     return { error: "End date and time isn't a valid date." };
   }
 

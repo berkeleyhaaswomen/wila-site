@@ -12,17 +12,7 @@ import {
   Card
 } from "@/components/admin/Field";
 import { EVENT_FORMATS, type EventItem } from "@/lib/types";
-
-/** <input type="datetime-local"> wants `YYYY-MM-DDTHH:mm` in local time. */
-function toLocalInput(iso?: string): string {
-  if (!iso) return "";
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return "";
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(
-    d.getHours()
-  )}:${pad(d.getMinutes())}`;
-}
+import { isoToPacificInput } from "@/lib/format";
 
 function SaveButton() {
   const { pending } = useFormStatus();
@@ -82,16 +72,17 @@ export default function EventForm({ event }: { event?: EventItem }) {
             <TextField
               name="startsAt"
               label="Starts at"
+              hint="Pacific time"
               type="datetime-local"
               required
-              defaultValue={toLocalInput(event?.startsAt)}
+              defaultValue={isoToPacificInput(event?.startsAt)}
             />
             <TextField
               name="endsAt"
               label="Ends at"
-              hint="optional"
+              hint="optional, Pacific"
               type="datetime-local"
-              defaultValue={toLocalInput(event?.endsAt)}
+              defaultValue={isoToPacificInput(event?.endsAt)}
             />
             <TextField
               name="location"
