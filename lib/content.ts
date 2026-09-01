@@ -2,7 +2,7 @@
  * Central content layer for the PUBLIC site.
  *
  * Content is edited in the admin site at /admin and stored in Postgres. If
- * DATABASE_URL isn't set, the site renders the hardcoded fallbacks below — so
+ * DATABASE_URL isn't set, the site renders the hardcoded fallbacks below, so
  * a fresh clone always builds and the site never goes dark waiting on a
  * database.
  */
@@ -25,7 +25,7 @@ const FALLBACK_EVENTS: EventItem[] = [
     format: "Virtual",
     price: "Free",
     blurb:
-      "Exclusive 1-hour session where seasoned professionals shared practical tips and insider advice on how to serve — and succeed — on boards.",
+      "Exclusive 1-hour session where seasoned professionals shared practical tips and insider advice on how to serve, and succeed, on boards.",
     rsvpUrl:
       "https://wila.haasalumni.org/event/from-interest-to-impact-serving-on-boards/"
   },
@@ -58,7 +58,7 @@ const FALLBACK_SPOTLIGHT: SpotlightItem = {
   title: "VP of Product, Lumen Health",
   spotlightLabel: "Q2 2026 Spotlight",
   quote:
-    "“The most useful thing Haas gave me wasn’t a framework — it was permission. Permission to ask the uncomfortable question in the room, to change my mind in public, to build a career that looks nothing like the one I drew up at 24. WILA is where I keep practicing that permission. Every time I show up, someone nudges me to go bigger than I planned to.”",
+    "“The most useful thing Haas gave me wasn’t a framework. It was permission. Permission to ask the uncomfortable question in the room, to change my mind in public, to build a career that looks nothing like the one I drew up at 24. WILA is where I keep practicing that permission. Every time I show up, someone nudges me to go bigger than I planned to.”",
   bio:
     "Priya leads the product org at Lumen Health, a Series C startup rethinking maternal and family care. Before Lumen she spent seven years at a major health system, where she launched one of the first telehealth programs on the West Coast. She mentors two WILA members each year and co-chairs our Bay Area chapter.",
   linkedin: "https://www.linkedin.com/",
@@ -106,6 +106,6 @@ export async function getSpotlight(): Promise<SpotlightItem> {
 }
 
 export async function getBoard(): Promise<BoardMember[]> {
-  // The board list is not editable in the admin site yet — it stays in code.
+  // The board list is not editable in the admin site yet, so it stays in code.
   return FALLBACK_BOARD;
 }

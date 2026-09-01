@@ -30,9 +30,9 @@ if (prod) {
 
 // Two input paths, because Node's readline behaves differently on each:
 //
-//   TTY  — rl.question() with output muted for password prompts, so nothing
+//   TTY:  rl.question() with output muted for password prompts, so nothing
 //          typed is echoed to the screen.
-//   pipe — rl.question() can only be called once on a non-TTY stdin (the
+//   pipe: rl.question() can only be called once on a non-TTY stdin (the
 //          second call never resolves), so read lines off the async iterator
 //          instead. This is what makes the script testable and scriptable.
 const isTty = Boolean(stdin.isTTY);
@@ -95,7 +95,7 @@ try {
   const name = await ask("Display name (optional): ");
 
   const roleAnswer =
-    (await ask("Role — [1] superadmin, [2] admin (default 1): ")) || "1";
+    (await ask("Role: [1] superadmin, [2] admin (default 1): ")) || "1";
   const role = roleAnswer === "2" ? "admin" : "superadmin";
 
   const password = await ask("Password (min 12 chars, hidden): ", {
@@ -140,11 +140,11 @@ try {
   console.log(`\n✓ ${u.email} is now a ${u.role}.`);
   if (becameOwner) {
     console.log(
-      "  They are also the OWNER — no other super admin can remove or demote them."
+      "  They are also the OWNER. No other super admin can remove or demote them."
     );
   }
   console.log(
-    "  Sign in at /admin/login — they can change the password from Account."
+    "  Sign in at /admin/login. They can change the password from Account."
   );
 } catch (err) {
   console.error(`\n${err.message}`);

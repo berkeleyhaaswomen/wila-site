@@ -17,7 +17,7 @@ const ALLOWED = new Set([
 /**
  * Uploads a spotlight photo to Vercel Blob and returns its public URL.
  *
- * Signed-in admins only — an open upload endpoint would let anyone use the
+ * Signed-in admins only. An open upload endpoint would let anyone use the
  * blob store as free file hosting.
  */
 export async function POST(request: Request) {

@@ -1,5 +1,6 @@
 import { getEvents, partitionEvents } from "@/lib/content";
 import EventsUI from "./EventsUI";
+import Reveal from "@/components/Reveal";
 
 export default async function Events() {
   const events = await getEvents();
@@ -8,7 +9,7 @@ export default async function Events() {
   return (
     <section id="events" className="bg-white py-20 md:py-28">
       <div className="container-tight">
-        <div className="max-w-2xl">
+        <Reveal className="block max-w-2xl">
           <span className="eyebrow">Events</span>
           <h2 className="section-title mt-4">
             Gathering, learning, and showing up for each other.
@@ -17,7 +18,7 @@ export default async function Events() {
             From global summits to chapter workshops, our calendar is built by
             alumnae, for alumnae.
           </p>
-        </div>
+        </Reveal>
         <EventsUI upcoming={upcoming} past={past} />
       </div>
     </section>

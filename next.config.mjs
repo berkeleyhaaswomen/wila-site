@@ -1,6 +1,6 @@
 /**
  * The admin site at /admin needs a server (Server Actions, dynamic routes, an
- * upload API route), so a static export can no longer include it — the
+ * upload API route), so a static export can no longer include it. The
  * STATIC_EXPORT path is kept only for a hypothetical public-site-only build,
  * and the GitHub Pages workflow that used it is disabled. Deploy on Vercel.
  */
@@ -17,7 +17,7 @@ const nextConfig = {
   }),
   ...(basePath && { basePath, assetPrefix: basePath }),
   // Spotlight photos are plain <img> tags pointing at Vercel Blob or a pasted
-  // URL, so next/image isn't in play — but keep uploads working if it ever is.
+  // URL, so next/image isn't in play, but keep uploads working if it ever is.
   images: isStaticExport
     ? { unoptimized: true }
     : {

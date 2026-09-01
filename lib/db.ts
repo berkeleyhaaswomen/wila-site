@@ -3,7 +3,7 @@ import { Pool } from "pg";
 /**
  * Postgres connection.
  *
- * Works with any Postgres provider (Neon, Supabase, Vercel Postgres, RDS) —
+ * Works with any Postgres provider (Neon, Supabase, Vercel Postgres, RDS).
  * the only configuration is DATABASE_URL. If it isn't set, callers fall back
  * to the hardcoded content in lib/content.ts, so the public site still builds
  * and renders in a fresh clone.
@@ -55,8 +55,8 @@ export function getPool(): Pool | null {
 }
 
 /**
- * Run a parameterised query. Always pass values as parameters ($1, $2, …) —
- * never interpolate user input into the SQL string.
+ * Run a parameterised query. Always pass values as parameters ($1, $2, …).
+ * Never interpolate user input into the SQL string.
  */
 export async function query<T = any>(
   text: string,

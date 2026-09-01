@@ -10,7 +10,7 @@ You don't need to know code. Everything happens in a web form.
 ## 1. Sign in
 
 Go to the site and scroll to the very bottom. Click
-**"Administrator? Sign in here."** — or go straight to
+**"Administrator? Sign in here."**: or go straight to
 **wila.haasalumni.org/admin**.
 
 Sign in with the email address and the temporary password a super admin gave
@@ -34,7 +34,7 @@ anywhere else.
 | **Owner** | One super admin, marked with an OWNER badge, that no other super admin can demote, remove, or reset the password of. |
 
 If you see a **Users** tab in the top nav, you're a super admin. If you don't,
-you're an Admin — and if you need someone added or removed, ask a
+you're an Admin, and if you need someone added or removed, ask a
 Co-President.
 
 ---
@@ -46,12 +46,12 @@ without touching real content.
 
 1. Click **Events** → **New event**
 2. Fill in:
-   - **Event title:** `Test event — please ignore`
+   - **Event title:** `Test event, please ignore`
    - **Blurb:** `This is a test.`
    - **Starts at:** any date next year
    - **Location:** `Test location`
    - **Format:** any
-3. Leave Slug blank — it fills itself in from the title
+3. Leave Slug blank, it fills itself in from the title
 4. Click **Save event**
 5. Open the public site in another tab; your test event appears under
    "Upcoming" within seconds
@@ -67,7 +67,7 @@ You now know how to publish anything.
 Events → **New event** → fill in the fields → **Save event**.
 Events sort themselves into "Upcoming" and "Past" based on their start date,
 so you never move them by hand. The link at the bottom of the card is labelled
-"RSVP" while the event is upcoming and "View recap" once it's passed — same
+"RSVP" while the event is upcoming and "View recap" once it's passed, same
 field, so put the recap URL there after the event.
 
 **Rotate the alumnae spotlight**
@@ -80,7 +80,7 @@ Older ones stay for reference.
 **Add a spotlight photo**
 On the spotlight form, either click **Upload a photo** and pick a file from
 your computer, or paste a link into the box next to it. Portrait orientation
-works best — roughly 800×1000, under 5 MB. If you skip it, the card falls back
+works best, roughly 800×1000, under 5 MB. If you skip it, the card falls back
 to the illustrated placeholder, which looks fine.
 
 ---
@@ -89,7 +89,7 @@ to the illustrated placeholder, which looks fine.
 
 - **Blurbs stay short.** One to three sentences. The card design falls apart
   with a wall of text.
-- **Write "Free" rather than leaving Price blank** when an event is free —
+- **Write "Free" rather than leaving Price blank** when an event is free 
   blank hides the row entirely.
 - **Check the start time's AM/PM** before saving. It decides whether the event
   shows as Upcoming or Past.
@@ -107,15 +107,15 @@ self-service password reset yet.
 
 **"My change isn't showing on the site."**
 Hard-refresh the public page (Cmd/Ctrl + Shift + R). If it's still missing,
-check the event's start date — it may have sorted into Past.
+check the event's start date, it may have sorted into Past.
 
 **"I deleted something by accident."**
 There's no revision history. Re-create it, and tell a Co-President so they
 know. If it was recent, the database provider may have a point-in-time backup
-— worth asking quickly.
+worth asking quickly.
 
 **"The admin site shows a database error."**
-That's for a Co-President or the technical maintainer — send them a
+That's for a Co-President or the technical maintainer, send them a
 screenshot.
 
 ---
@@ -131,5 +131,5 @@ screenshot.
 
 ---
 
-**That's it — welcome aboard!** The fastest way to get comfortable is to
+**That's it, welcome aboard!** The fastest way to get comfortable is to
 publish a real event. Everything else in the admin site works the same way.

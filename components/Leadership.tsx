@@ -1,4 +1,5 @@
 import { getBoard } from "@/lib/content";
+import Reveal from "@/components/Reveal";
 
 function Avatar({ name, photoUrl }: { name: string; photoUrl?: string }) {
   const url = photoUrl || null;
@@ -32,14 +33,14 @@ export default async function Leadership() {
   return (
     <section id="leadership" className="bg-white py-20 md:py-28">
       <div className="container-tight">
-        <div className="max-w-2xl">
+        <Reveal className="block max-w-2xl">
           <span className="eyebrow">Leadership</span>
           <h2 className="section-title mt-4">Meet the WILA Board.</h2>
           <p className="lede mt-4">
             The volunteer alumnae driving WILA's programs, mentorship, and
-            community — at work and beyond.
+            community, at work and beyond.
           </p>
-        </div>
+        </Reveal>
 
         <ul className="mt-12 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {board.map((m) => (

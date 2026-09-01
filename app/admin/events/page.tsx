@@ -28,7 +28,7 @@ function Row({ e, past }: { e: EventItem; past: boolean }) {
           {e.format}
         </span>
       </td>
-      <td className="py-3 pr-4 text-sm text-ink/70">{e.price || "—"}</td>
+      <td className="py-3 pr-4 text-sm text-ink/70">{e.price || "Not set"}</td>
       <td className="py-3 text-right">
         <span
           className={`text-[11px] font-semibold uppercase tracking-wider ${

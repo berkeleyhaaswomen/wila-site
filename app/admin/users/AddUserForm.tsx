@@ -45,7 +45,7 @@ export default function AddUserForm() {
       </div>
 
       <p className="text-xs leading-relaxed text-ink/50">
-        There&apos;s no invitation email — set a temporary password, share it
+        There&apos;s no invitation email. Set a temporary password, share it
         with them privately (not over email if you can avoid it), and ask them to
         change it from the Account page as soon as they sign in.
       </p>

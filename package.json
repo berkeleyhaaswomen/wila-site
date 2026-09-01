@@ -2,7 +2,7 @@
   "name": "wila-site",
   "version": "1.1.0",
   "private": true,
-  "description": "Women in Leadership Alumnae (WILA) — Berkeley Haas",
+  "description": "Women in Leadership Alumnae (WILA), Berkeley Haas",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

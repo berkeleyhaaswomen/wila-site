@@ -26,41 +26,24 @@ export default function Nav() {
     <header
       className={`fixed inset-x-0 top-0 z-50 transition ${
         scrolled
-          ? "border-b border-white/10 bg-berkeley-blue/90 backdrop-blur"
+          ? "border-b border-white/10 bg-ink/70 backdrop-blur-xl"
           : "bg-transparent"
       }`}
     >
-      <div className="container-wide flex h-16 items-center justify-between md:h-20">
-        <a href="#top" className="flex items-center gap-3">
-          <img
-            src="/wila-mark.png"
-            alt=""
-            aria-hidden="true"
-            className="h-9 w-auto md:h-11"
-          />
-          <span className="leading-tight">
-            <span className="block font-serif text-base font-semibold text-white">
-              WILA
-            </span>
-            <span className="block text-[11px] uppercase tracking-[0.18em] text-white/70">
-              Berkeley Haas
-            </span>
-          </span>
-        </a>
-
+      <div className="container-wide flex h-16 items-center justify-end gap-6 md:h-20">
         <nav className="hidden items-center gap-8 md:flex">
           {links.map((l) => (
             <a
               key={l.href}
               href={l.href}
-              className="text-sm font-medium text-white/80 transition hover:text-white"
+              className="text-[13px] font-semibold uppercase tracking-[0.14em] text-white/70 transition hover:text-white"
             >
               {l.label}
             </a>
           ))}
           <a
             href="#contact"
-            className="inline-flex items-center justify-center gap-2 rounded-full border border-white/60 bg-white/10 px-5 py-2 text-sm font-semibold text-white transition hover:bg-white hover:text-berkeley-blue focus:outline-none focus:ring-2 focus:ring-california-gold focus:ring-offset-2 focus:ring-offset-berkeley-blue"
+            className="inline-flex items-center justify-center gap-2 rounded-full border border-california-gold/70 bg-california-gold/15 px-5 py-2 text-[13px] font-semibold uppercase tracking-[0.14em] text-california-gold transition hover:bg-california-gold hover:text-ink focus:outline-none focus:ring-2 focus:ring-california-gold focus:ring-offset-2 focus:ring-offset-berkeley-blue"
           >
             Join us
           </a>

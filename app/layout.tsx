@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "WILA — Women in Leadership Alumnae | Berkeley Haas",
+  title: "WILA · Women in Leadership Alumnae | Berkeley Haas",
   description:
     "A global network of Berkeley Haas alumnae dedicated to fostering a supportive community that uplifts and empowers women.",
   openGraph: {
-    title: "WILA — Women in Leadership Alumnae",
+    title: "WILA · Women in Leadership Alumnae",
     description:
       "A global network of Berkeley Haas alumnae fostering community, mentorship, and leadership.",
     url: "https://wila.haasalumni.org",

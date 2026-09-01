@@ -21,7 +21,7 @@ const COOKIE = "wila_session";
 const MAX_AGE_SECONDS = 60 * 60 * 8; // 8 hours
 
 /**
- * The session cookie is a signed JWT. AUTH_SECRET must be set in production —
+ * The session cookie is a signed JWT. AUTH_SECRET must be set in production.
  * we refuse to fall back to a default, because a predictable secret would let
  * anyone mint an admin session.
  */
@@ -50,7 +50,7 @@ export async function verifyPassword(
 }
 
 /**
- * Minimum bar for admin passwords. Deliberately modest — length does the real
+ * Minimum bar for admin passwords. Deliberately modest, since length does the real
  * work, and rules people can't satisfy just push them toward "Password1!".
  */
 export function passwordProblem(plain: string): string | null {
@@ -127,7 +127,7 @@ export async function requireUser(returnTo = "/admin"): Promise<SessionUser> {
   return user;
 }
 
-/** Superadmins only — used by everything under /admin/users. */
+/** Superadmins only. Used by everything under /admin/users. */
 export async function requireSuperadmin(
   returnTo = "/admin"
 ): Promise<SessionUser> {

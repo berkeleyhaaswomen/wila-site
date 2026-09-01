@@ -2,19 +2,19 @@
 -- Idempotent: safe to run repeatedly. Applied by `npm run db:migrate`.
 
 -- gen_random_uuid() is core Postgres since 13. On older servers it lives in
--- pgcrypto, so try to enable it — but don't fail the migration if the
+-- pgcrypto, so try to enable it, but don't fail the migration if the
 -- extension isn't installable, since we almost certainly don't need it.
 DO $$
 BEGIN
   CREATE EXTENSION IF NOT EXISTS pgcrypto;
 EXCEPTION WHEN OTHERS THEN
-  RAISE NOTICE 'pgcrypto unavailable (%). Continuing — gen_random_uuid() is built in on Postgres 13+.', SQLERRM;
+  RAISE NOTICE 'pgcrypto unavailable (%). Continuing, gen_random_uuid() is built in on Postgres 13+.', SQLERRM;
 END $$;
 
 -- ---------------------------------------------------------------- users ----
 -- Two roles, matching how the board actually works:
---   superadmin — everything, including adding/removing website managers
---   admin      — all content (events, spotlights), but cannot manage users
+--   superadmin: everything, including adding/removing website managers
+--   admin:      all content (events, spotlights), but cannot manage users
 CREATE TABLE IF NOT EXISTS users (
   id            uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   email         text NOT NULL,

@@ -27,7 +27,7 @@ export function loadEnv(file = ".env.local") {
 /**
  * Picks the env file based on a --prod flag, so pointing a script at the live
  * database is explicit and one-off. Without this the tempting move is editing
- * .env.local, which is easy to forget to undo — and then `npm run dev` is
+ * .env.local, which is easy to forget to undo, and then `npm run dev` is
  * silently reading and writing production.
  */
 export function loadEnvForTarget(argv = process.argv) {

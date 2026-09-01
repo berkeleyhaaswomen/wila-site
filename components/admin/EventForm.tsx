@@ -90,7 +90,7 @@ export default function EventForm({ event }: { event?: EventItem }) {
               required
               maxLength={160}
               defaultValue={event?.location}
-              placeholder="Pleasanton, CA — or Zoom"
+              placeholder="Pleasanton, CA, or Zoom"
             />
             <SelectField
               name="format"

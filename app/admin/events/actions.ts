@@ -46,7 +46,7 @@ function parse(formData: FormData) {
   const rawSlug = String(formData.get("slug") ?? "").trim();
   return schema.safeParse({
     title,
-    // Empty slug is a convenience, not an error — derive it from the title.
+    // Empty slug is a convenience, not an error. Derive it from the title.
     slug: rawSlug || slugify(title),
     startsAt: String(formData.get("startsAt") ?? ""),
     endsAt: String(formData.get("endsAt") ?? ""),

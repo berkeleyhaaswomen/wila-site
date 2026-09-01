@@ -71,7 +71,7 @@ export async function addUser(
 }
 
 /**
- * Change someone's role. Refuses to demote the last superadmin — otherwise
+ * Change someone's role. Refuses to demote the last superadmin, otherwise
  * nobody could ever manage users again.
  */
 export async function changeRole(formData: FormData): Promise<void> {

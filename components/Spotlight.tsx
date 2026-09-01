@@ -1,4 +1,5 @@
 import { getSpotlight } from "@/lib/content";
+import Reveal from "@/components/Reveal";
 
 /**
  * Placeholder portrait, used when the spotlight has no photo yet.
@@ -73,7 +74,7 @@ export default async function Spotlight() {
         className="pointer-events-none absolute -left-32 top-24 h-72 w-72 rounded-full bg-california-gold/10 blur-3xl"
       />
       <div className="container-tight">
-        <div className="max-w-2xl">
+        <Reveal className="block max-w-2xl">
           <span className="eyebrow">Alumnae Spotlight</span>
           <h2 className="section-title mt-4">
             In her own words.
@@ -82,7 +83,7 @@ export default async function Spotlight() {
             Each quarter we highlight an alumna whose work reflects the WILA
             pillars in motion.
           </p>
-        </div>
+        </Reveal>
 
         <article className="mt-12 grid overflow-hidden rounded-3xl bg-white shadow-card md:grid-cols-12">
           <div className="relative aspect-[4/5] md:col-span-5 md:aspect-auto">

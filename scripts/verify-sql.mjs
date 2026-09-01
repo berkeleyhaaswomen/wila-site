@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Runs db/schema.sql and every query the app issues against a real Postgres
- * (PGlite — Postgres compiled to WASM, in-process). Catches SQL typos,
+ * (PGlite, which is Postgres compiled to WASM, in-process). Catches SQL typos,
  * constraint mistakes, and bad column names without needing a database server.
  *
  *   node scripts/verify-sql.mjs
@@ -94,7 +94,7 @@ await step("updateUserRole / updateUserPassword", async () => {
 });
 // PGlite freezes now() and clock_timestamp(), so we can't assert that the
 // timestamp *advances*. Instead, back-date the row and check the trigger
-// overwrites it — which proves the trigger is attached and firing.
+// overwrites it, which proves the trigger is attached and firing.
 await step("updated_at trigger fires on UPDATE", async () => {
   await db.query(
     `UPDATE users SET updated_at = '2000-01-01T00:00:00Z' WHERE id = $1`,
@@ -104,7 +104,7 @@ await step("updated_at trigger fires on UPDATE", async () => {
     userId
   ]);
   if (new Date(stale.rows[0].updated_at).getFullYear() !== 2000) {
-    // The trigger already replaced it during the back-dating UPDATE — also fine.
+    // The trigger already replaced it during the back-dating UPDATE, also fine.
     return;
   }
   throw new Error("trigger did not overwrite a manually-set updated_at");
@@ -297,7 +297,7 @@ await step("a spotlight with no featured_from sorts last, not first", async () =
     `SELECT name FROM spotlights ORDER BY featured_from DESC NULLS LAST, created_at DESC LIMIT 1`
   );
   if (r.rows[0].name !== "Newest Alumna") {
-    throw new Error(`NULLS LAST broken — homepage would show "${r.rows[0].name}"`);
+    throw new Error(`NULLS LAST broken, homepage would show "${r.rows[0].name}"`);
   }
 });
 

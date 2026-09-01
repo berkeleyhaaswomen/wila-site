@@ -85,8 +85,8 @@ export default function SpotlightForm({
               rows={6}
               maxLength={1200}
               defaultValue={spotlight?.quote}
-              hint="shown as the pull quote — include the curly quotation marks"
-              placeholder="“The most useful thing Haas gave me wasn’t a framework — it was permission…”"
+              hint="shown as the pull quote, include the curly quotation marks"
+              placeholder="“The most useful thing Haas gave me wasn’t a framework. It was permission…”"
             />
             <TextArea
               name="bio"
@@ -151,7 +151,7 @@ export default function SpotlightForm({
               name="pillar"
               label="Pillar"
               options={PILLARS}
-              includeBlank="— none —"
+              includeBlank="None"
               defaultValue={spotlight?.pillar}
             />
             <TextField

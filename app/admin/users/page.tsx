@@ -68,10 +68,10 @@ export default async function UsersPage({
         <strong className="font-semibold text-ink">Super admins</strong> can do
         everything, including adding and removing the people on this page.{" "}
         <strong className="font-semibold text-ink">Admins</strong> can edit every
-        page — events and spotlights — but can&apos;t change who has access.
+        page, events and spotlights, but can&apos;t change who has access.
         The <strong className="font-semibold text-ink">owner</strong> is one
         super admin that no other super admin can demote, remove, or reset the
-        password of — so nobody can lock them out. Ownership can only be handed
+        password of, so nobody can lock them out. Ownership can only be handed
         over by the owner.
       </p>
 
@@ -115,7 +115,7 @@ export default async function UsersPage({
                     {/*
                       key includes the role so React remounts the select when
                       the server value changes. Without it, an uncontrolled
-                      select keeps whatever the user picked — so a rejected
+                      select keeps whatever the user picked, so a rejected
                       change (e.g. demoting the last super admin) would keep
                       displaying the new role even though nothing was saved.
                     */}
@@ -146,7 +146,7 @@ export default async function UsersPage({
                 </td>
                 <td className="px-4 py-3 text-right">
                   {u.id === me.id || u.isOwner ? (
-                    <span className="text-xs text-ink/40">—</span>
+                    <span className="text-xs text-ink/40">Not available</span>
                   ) : (
                     <div className="flex flex-col items-end gap-1.5">
                       <form action={removeUser}>

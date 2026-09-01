@@ -103,7 +103,7 @@ export default async function SpotlightsPage({
                     {s.name}
                   </div>
                   <div className="truncate text-xs text-ink/60">
-                    {s.title || "—"}
+                    {s.title || "Not set"}
                   </div>
                   <div className="mt-1 text-xs text-ink/45">
                     {s.featuredFrom

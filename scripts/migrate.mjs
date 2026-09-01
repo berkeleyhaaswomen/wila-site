@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Applies db/schema.sql. Idempotent — run it as often as you like.
+ * Applies db/schema.sql. Idempotent, so run it as often as you like.
  *
  *   npm run db:migrate
  *

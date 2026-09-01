@@ -7,7 +7,7 @@ export const metadata: Metadata = {
 };
 
 /**
- * The admin site has its own chrome — none of the public site's nav or footer.
+ * The admin site has its own chrome, with none of the public site's nav or footer.
  * Individual pages render <AdminShell> for the signed-in layout; the login
  * page deliberately doesn't, so it stays a bare, centred card.
  */

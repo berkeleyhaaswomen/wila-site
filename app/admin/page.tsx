@@ -96,7 +96,7 @@ export default async function AdminHome({
           <h2 className="font-serif text-xl text-ink">Add an event</h2>
           <p className="mt-2 text-sm leading-relaxed text-ink/70">
             Events sort themselves into Upcoming and Past on the public site
-            based on their start time — you never have to move them by hand.
+            based on their start time, so you never have to move them by hand.
           </p>
           <Link
             href="/admin/events/new"

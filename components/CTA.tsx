@@ -1,5 +1,8 @@
 "use client";
 
+import Reveal from "@/components/Reveal";
+
+
 export default function CTA() {
   return (
     <section id="contact" className="relative overflow-hidden bg-berkeley-blue py-20 text-white md:py-24">
@@ -8,18 +11,19 @@ export default function CTA() {
         className="pointer-events-none absolute -right-24 -top-24 h-96 w-96 rounded-full bg-california-gold/15 blur-3xl"
       />
       <div className="container-tight grid gap-10 md:grid-cols-12 md:items-end">
-        <div className="md:col-span-7">
-          <span className="text-xs font-semibold uppercase tracking-[0.18em] text-california-gold">
-            — Stay close
+        <Reveal className="block md:col-span-7">
+          <span className="inline-flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.3em] text-california-gold">
+            <span className="h-px w-8 bg-california-gold/60" />
+            Stay close
           </span>
-          <h2 className="mt-3 font-serif text-3xl leading-tight md:text-5xl">
+          <h2 className="display mt-3 text-[clamp(1.8rem,4vw,3.25rem)]">
             Get on the WILA list.
           </h2>
           <p className="mt-4 max-w-xl text-white/80">
             Quarterly notes, event invites, mentor program openings, and the
-            spotlight straight to your inbox. No noise — promise.
+            spotlight straight to your inbox. No noise, we promise.
           </p>
-        </div>
+        </Reveal>
         <form
           className="md:col-span-5 flex flex-col gap-3 sm:flex-row"
           onSubmit={(e) => e.preventDefault()}

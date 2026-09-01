@@ -10,8 +10,8 @@ const inputClass =
 
 /**
  * Photo picker with two ways in: upload a file, or paste a URL. The canonical
- * value is always the URL in the hidden-ish text input — uploading just fills
- * it in — so the form works identically whether or not blob storage is set up.
+ * value is always the URL in the text input. Uploading just fills it in, so
+ * the form works identically whether or not blob storage is set up.
  */
 export default function PhotoField({
   name = "photoUrl",
@@ -61,7 +61,7 @@ export default function PhotoField({
             />
           ) : (
             <div className="grid h-full w-full place-items-center px-2 text-center text-[10px] leading-tight text-ink/40">
-              No photo — the illustrated placeholder will be used
+              No photo, the illustrated placeholder will be used
             </div>
           )}
         </div>
@@ -120,7 +120,7 @@ export default function PhotoField({
           )}
           {error && <p className="text-xs text-red-700">{error}</p>}
           <p className="text-xs text-ink/45">
-            Portrait orientation works best — roughly 800×1000, under 5 MB.
+            Portrait orientation works best, roughly 800×1000, under 5 MB.
           </p>
         </div>
       </div>

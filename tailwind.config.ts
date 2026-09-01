@@ -20,7 +20,8 @@ const config: Config = {
       },
       fontFamily: {
         sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
-        serif: ["'Source Serif 4'", "'Source Serif Pro'", "Georgia", "serif"]
+        serif: ["'Source Serif 4'", "'Source Serif Pro'", "Georgia", "serif"],
+        display: ["'Archivo Black'", "Impact", "Haettenschweiler", "sans-serif"]
       },
       boxShadow: {
         soft: "0 10px 30px -12px rgba(0, 50, 98, 0.18)",

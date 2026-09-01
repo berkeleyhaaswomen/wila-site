@@ -1,4 +1,4 @@
-# WILA Site — Admin Guide
+# WILA Site, Admin Guide
 
 The public site is a Next.js app on **Vercel**. Content is managed from an
 **admin site built into the same app at `/admin`**, reachable from the
@@ -14,15 +14,15 @@ alumnae spotlight. No code required.
 | Role | What they can do |
 |---|---|
 | **Super admin** | Everything. Adds and removes the people who manage the website, changes their roles, resets their passwords, edits all content. |
-| **Admin** | Every content page — events and spotlights: create, edit, delete. **Cannot** add or remove users or change roles. |
+| **Admin** | Every content page, events and spotlights: create, edit, delete. **Cannot** add or remove users or change roles. |
 
 The Users page is hidden from the nav for Admins, and the server rejects the
-request even if they navigate to `/admin/users` directly — the check is on the
+request even if they navigate to `/admin/users` directly, the check is on the
 server, not just in the UI.
 
 ### The owner
 
-One super admin is the **owner** — by default whoever runs `npm run admin:create`
+One super admin is the **owner**: by default whoever runs `npm run admin:create`
 first. No other super admin can demote them, remove them, or reset their
 password, so a co-president (or a compromised account) can't lock them out.
 
@@ -35,13 +35,13 @@ admin if needed and drops the old owner's protection, in a single transaction
 so there's never zero owners or two.
 
 If you're the owner and you're leaving the board, transfer ownership before
-your access is removed — otherwise the account can only be cleared with direct
+your access is removed, otherwise the account can only be cleared with direct
 database access.
 
 ### Other lockout guards
 
 - The **last super admin cannot be demoted** to Admin.
-- **Nobody can remove their own access** — ask another super admin.
+- **Nobody can remove their own access**: ask another super admin.
 - The **owner must stay a super admin**.
 
 ---
@@ -59,7 +59,7 @@ Any provider works. [Neon](https://neon.tech) is the easiest free option:
 2. Copy the **connection string** (it looks like
    `postgresql://user:pass@ep-xxx.aws.neon.tech/neondb?sslmode=require`)
 
-Supabase, Vercel Postgres, or your own server work identically — the app only
+Supabase, Vercel Postgres, or your own server work identically, the app only
 needs the connection string.
 
 ### 2. Configure the app locally
@@ -70,11 +70,11 @@ cp .env.example .env.local
 
 Fill in:
 
-- `DATABASE_URL` — the connection string from step 1
-- `AUTH_SECRET` — generate one with `openssl rand -base64 32`
+- `DATABASE_URL`, the connection string from step 1
+- `AUTH_SECRET`, generate one with `openssl rand -base64 32`
 
 `AUTH_SECRET` signs the login cookie. **Keep it secret**, and use a different
-value in production than in local development. If it ever leaks, change it —
+value in production than in local development. If it ever leaks, change it 
 that immediately signs everybody out.
 
 ### 3. Create the tables
@@ -92,11 +92,11 @@ npm run admin:create
 ```
 
 It asks for an email, a display name, a role, and a password. **The password
-prompt is hidden** — nothing is echoed to your terminal, written to your shell
+prompt is hidden**: nothing is echoed to your terminal, written to your shell
 history, or stored in this repo. Use a strong one; the minimum is 12
 characters.
 
-After this, super admins add everyone else from `/admin/users` — you shouldn't
+After this, super admins add everyone else from `/admin/users`, you shouldn't
 need this script again except to recover a locked-out account.
 
 ### 5. Deploy to Vercel
@@ -110,7 +110,7 @@ vercel --prod
 In the Vercel dashboard → your project → **Settings → Environment Variables**,
 add the same two variables (`DATABASE_URL`, `AUTH_SECRET`), then redeploy.
 
-Run the migration once against the production database too — either set
+Run the migration once against the production database too, either set
 `DATABASE_URL` locally to the production string and run `npm run db:migrate`,
 or run it from the provider's SQL console by pasting in `db/schema.sql`.
 
@@ -123,7 +123,7 @@ a URL:
 2. Copy the store's **Read/Write Token**
 3. Add it as `BLOB_READ_WRITE_TOKEN` in both `.env.local` and Vercel
 
-Without it everything still works — the upload button is disabled and admins
+Without it everything still works, the upload button is disabled and admins
 paste an image URL instead.
 
 ### 7. Point the domain
@@ -137,10 +137,10 @@ CNAME record Vercel gives you to the DNS for `haasalumni.org`.
 
 Go to **`/admin/users`**.
 
-**To add someone:** fill in the "Add someone" form at the bottom — email,
+**To add someone:** fill in the "Add someone" form at the bottom, email,
 optional name, role, and a temporary password. There is no invitation email,
 so share the temporary password with them privately (in person or over
-Signal/Slack — not email if you can avoid it) and ask them to change it from
+Signal/Slack, not email if you can avoid it) and ask them to change it from
 the **Account** page as soon as they sign in.
 
 **To change a role:** pick the new role from the dropdown in their row and
@@ -149,7 +149,7 @@ click Save.
 **To reset a locked-out person's password:** click "Reset password" in their
 row, set a new one, and share it privately.
 
-**To remove someone:** click Remove in their row. This is immediate — any
+**To remove someone:** click Remove in their row. This is immediate, any
 session they have open stops working on their next click, because every
 request re-checks the account against the database.
 
@@ -175,11 +175,11 @@ Sign in at **`/admin`**.
 | Ends at | Optional, joins the date line |
 | Location | The pin row |
 | Format | The **In person / Virtual / Hybrid** badge |
-| Price | The dollar row — write "Free" or "$75" |
+| Price | The dollar row, write "Free" or "$75" |
 | RSVP / recap link | The link at the bottom of the card |
 
 Events move between **Upcoming** and **Past** automatically based on the start
-time — you never move them by hand. The bottom link is labelled "RSVP" for
+time, you never move them by hand. The bottom link is labelled "RSVP" for
 upcoming events and "View recap" for past ones.
 
 ### Rotate the alumnae spotlight
@@ -193,14 +193,14 @@ upcoming events and "View recap" for past ones.
 | Current title | The large serif headline |
 | Quote | The gold-rule pull quote |
 | Short bio | The paragraph under the quote |
-| Photo | The portrait — upload a file or paste a URL |
+| Photo | The portrait, upload a file or paste a URL |
 | LinkedIn URL | The "View LinkedIn profile" button |
 | 'Nominate an alumna' link | That button. Defaults to `#contact` |
 | Pillar / Chapter / Mentor cohort | The three-column strip at the bottom |
 | Featured from | Which spotlight wins the homepage |
 
 The homepage shows the spotlight with the **most recent "Featured from"**
-date. Older ones stay in the list for reference — the one currently live is
+date. Older ones stay in the list for reference, the one currently live is
 tagged "On the homepage".
 
 Any field you leave blank is omitted from the card rather than rendering an
@@ -215,7 +215,7 @@ empty row, so a half-filled spotlight still looks intentional.
 ## Making changes appear live
 
 Saving in the admin site calls `revalidatePath("/")`, so the public homepage
-picks up changes on the next request — usually within seconds. No redeploy
+picks up changes on the next request, usually within seconds. No redeploy
 needed.
 
 ---
@@ -230,7 +230,7 @@ npm run admin:create
 npm run dev                  # site at localhost:3000, admin at /admin
 ```
 
-Without `DATABASE_URL` the public site still runs — it shows the hardcoded
+Without `DATABASE_URL` the public site still runs, it shows the hardcoded
 fallback content in `lib/content.ts`, and `/admin` explains what's missing.
 
 To check the SQL without a database server:
@@ -263,7 +263,7 @@ existing email resets that account's password and role rather than failing.
 
 **A published change isn't on the public site.**
 Hard-refresh (Cmd/Ctrl + Shift + R). If it's still missing, check the event's
-start time — it may have sorted into Past rather than Upcoming.
+start time, it may have sorted into Past rather than Upcoming.
 
 **Uploads say they aren't configured.**
 `BLOB_READ_WRITE_TOKEN` isn't set. Either add it (step 6) or paste an image

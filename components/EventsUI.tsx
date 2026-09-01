@@ -91,7 +91,7 @@ function EmptyState() {
           <path d="M3 9h18M8 3v4M16 3v4" stroke="#003262" strokeWidth="1.6" strokeLinecap="round"/>
         </svg>
       </div>
-      <h3 className="font-serif text-xl text-ink">No upcoming events — yet.</h3>
+      <h3 className="font-serif text-xl text-ink">No upcoming events yet.</h3>
       <p className="max-w-md text-sm text-ink/70">
         We're finalizing our next round of programming. Join the WILA email list
         below to be the first to hear when new events open.

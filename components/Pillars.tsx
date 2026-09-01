@@ -1,8 +1,10 @@
+import Reveal from "@/components/Reveal";
+
 const pillars = [
   {
     title: "Question the Status Quo",
     tag: "Diversity & Inclusion",
-    body: "We challenge norms and build more equitable paths for women in leadership — across industries, life stages, and geographies."
+    body: "We challenge norms and build more equitable paths for women in leadership, across industries, life stages, and geographies."
   },
   {
     title: "Confidence Without Attitude",
@@ -12,7 +14,7 @@ const pillars = [
   {
     title: "Student Always",
     tag: "Professional Development",
-    body: "We keep learning — through mentorship, programming, and the generous exchange of hard-earned wisdom."
+    body: "We keep learning through mentorship, programming, and the generous exchange of hard-earned wisdom."
   },
   {
     title: "Beyond Yourself",
@@ -25,16 +27,16 @@ export default function Pillars() {
   return (
     <section id="pillars" className="bg-cream py-20 md:py-28">
       <div className="container-tight">
-        <div className="max-w-3xl">
+        <Reveal className="block max-w-3xl">
           <span className="eyebrow">The Four Pillars</span>
           <h2 className="section-title mt-4">
             The Berkeley Haas Defining Principles, in our voice.
           </h2>
           <p className="lede mt-5">
-            Our pillars are more than words on a wall — they shape every event,
+            Our pillars are more than words on a wall. They shape every event,
             mentor match, and conversation we host.
           </p>
-        </div>
+        </Reveal>
 
         <div className="mt-12 grid gap-5 md:grid-cols-2">
           {pillars.map((p, i) => (

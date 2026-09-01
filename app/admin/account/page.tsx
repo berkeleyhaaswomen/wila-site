@@ -19,7 +19,7 @@ export default async function AccountPage() {
             </div>
             <div className="flex justify-between gap-4">
               <dt className="text-ink/55">Name</dt>
-              <dd className="font-semibold text-ink">{user.name || "—"}</dd>
+              <dd className="font-semibold text-ink">{user.name || "Not set"}</dd>
             </div>
             <div className="flex justify-between gap-4">
               <dt className="text-ink/55">Role</dt>

@@ -1,4 +1,4 @@
-# DISABLED — GitHub Pages can no longer host this site.
+# DISABLED. GitHub Pages can no longer host this site.
 #
 # The admin site at /admin needs a server: it uses Server Actions for sign-in
 # and for saving events and spotlights, dynamic routes for /admin/events/[id],
@@ -7,7 +7,7 @@
 #
 #     Server Actions are not supported with static export.
 #
-# The site is deployed on Vercel, which runs the server — see ADMIN.md step 5.
+# The site is deployed on Vercel, which runs the server. See ADMIN.md step 5.
 # This file is kept (rather than deleted) so the history and the Pages setup are
 # easy to find if GitHub Pages is ever wanted again for a static-only variant.
 #
@@ -16,7 +16,7 @@
 #
 # The automatic `push` and `repository_dispatch` triggers are removed so this
 # can't fail on every push to main. `workflow_dispatch` is left in place, which
-# means it only ever runs if someone deliberately presses "Run workflow" — and
+# means it only ever runs if someone deliberately presses "Run workflow", and
 # it will fail until the notes above are addressed.
 
 name: Deploy to GitHub Pages (disabled)

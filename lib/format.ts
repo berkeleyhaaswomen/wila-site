@@ -1,5 +1,5 @@
 /**
- * Pure formatting helpers — no database, no server-only imports, so client
+ * Pure formatting helpers. No database, no server-only imports, so client
  * components can use them too.
  */
 import type { EventItem } from "./types";
@@ -8,7 +8,7 @@ import type { EventItem } from "./types";
  * All event times are shown in Pacific.
  *
  * Without pinning this, the same timestamp renders in UTC on the server and in
- * the visitor's zone in the browser — which is a hydration mismatch on the
+ * the visitor's zone in the browser, which is a hydration mismatch on the
  * public site, and makes the admin list (server-rendered) disagree with the
  * event cards (client-rendered) about what time an event starts.
  *
@@ -79,7 +79,7 @@ function tzOffsetMs(at: Date, tz: string): number {
  * ISO string, reading it as Pacific.
  *
  * `new Date("2027-06-18T09:30")` would read it in whatever zone the machine
- * happens to be in — Pacific on a Bay Area laptop, UTC on Vercel. That
+ * happens to be in: Pacific on a Bay Area laptop, UTC on Vercel. That
  * silently shifts every event by 7-8 hours once deployed.
  *
  * Two passes so the offset is looked up at the right instant across a DST

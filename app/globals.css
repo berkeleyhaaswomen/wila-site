@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700;800&family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -29,12 +29,12 @@ body {
     @apply mx-auto max-w-7xl px-6 md:px-8;
   }
   .eyebrow {
-    @apply inline-flex items-center gap-2 text-xs md:text-sm font-semibold uppercase tracking-[0.18em] text-berkeley-blue;
+    @apply inline-flex items-center gap-3 text-[11px] md:text-xs font-semibold uppercase tracking-[0.3em] text-medalist;
   }
   .eyebrow::before {
     content: "";
-    width: 28px;
-    height: 2px;
+    width: 34px;
+    height: 1px;
     background-color: #FDB515;
     display: inline-block;
   }
@@ -45,7 +45,18 @@ body {
     @apply inline-flex items-center justify-center gap-2 rounded-full border border-berkeley-blue/20 bg-white px-6 py-3 text-sm font-semibold text-berkeley-blue transition hover:border-berkeley-blue hover:bg-white;
   }
   .section-title {
-    @apply font-serif text-3xl md:text-5xl leading-[1.1] tracking-tight text-ink;
+    @apply font-display uppercase text-[clamp(1.9rem,4.2vw,3.5rem)] leading-[0.95] tracking-[-0.02em] text-ink;
+  }
+  /* Big poster type. Archivo Black only ships one weight, so size and
+     tracking do all the work. */
+  .display {
+    @apply font-display uppercase leading-[0.86] tracking-[-0.02em];
+  }
+  .display-xl {
+    @apply display text-[clamp(2.75rem,11vw,9rem)];
+  }
+  .display-lg {
+    @apply display text-[clamp(2rem,7vw,5rem)];
   }
   .lede {
     @apply text-base md:text-lg leading-relaxed text-ink/75;

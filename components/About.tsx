@@ -1,19 +1,21 @@
+import Reveal from "@/components/Reveal";
+
 export default function About() {
   return (
     <section id="about" className="bg-white py-20 md:py-28">
       <div className="container-tight grid gap-12 md:grid-cols-12">
-        <div className="md:col-span-5">
+        <Reveal className="block md:col-span-5">
           <span className="eyebrow">Our Community</span>
           <h2 className="section-title mt-4">
             A network built on candor, craft, and care.
           </h2>
-        </div>
+        </Reveal>
         <div className="md:col-span-7">
           <p className="lede">
             WILA convenes Berkeley Haas alumnae across industries and continents
             for authentic, compassionate conversation. Our programming spans
             professional development, personal well-being, and community impact
-            — because leadership is never one-dimensional.
+            because leadership is never one-dimensional.
           </p>
           <p className="lede mt-5">
             Whether you are navigating a career pivot, raising your voice in a
