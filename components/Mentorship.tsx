@@ -31,8 +31,12 @@ export default function Mentorship() {
             Connect with accomplished women leaders from the Berkeley Haas
             alumni community who are ready to guide your professional journey.
           </p>
+          {/* The mentorship programme runs on its own platform, so this
+              leaves the site. Opened in a new tab to keep WILA behind it. */}
           <a
-            href="/join"
+            href="https://wilamentorship.org/welcome"
+            target="_blank"
+            rel="noreferrer noopener"
             className="group mt-9 inline-flex items-center gap-3 rounded-full bg-california-gold px-7 py-3.5 text-sm font-semibold text-ink transition hover:bg-white"
           >
             Find a mentor
