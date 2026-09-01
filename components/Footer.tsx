@@ -22,6 +22,7 @@ export default function Footer() {
             Explore
           </div>
           <ul className="mt-4 space-y-2 text-sm">
+            <li><a className="transition hover:text-white" href="/">Home</a></li>
             <li><a className="transition hover:text-white" href="/about">About</a></li>
             <li><a className="transition hover:text-white" href="/#events">Events</a></li>
             <li><a className="transition hover:text-white" href="/photos">Photos</a></li>

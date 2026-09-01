@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 /**
@@ -20,8 +21,8 @@ export default function LogoWatermark() {
   }, []);
 
   return (
-    <a
-      href="#top"
+    <Link
+      href="/"
       aria-label="WILA, Berkeley Haas Women in Leadership Alumnae"
       className="fixed left-5 top-4 z-[60] block transition-all duration-500 md:left-8 md:top-6"
     >
@@ -35,6 +36,6 @@ export default function LogoWatermark() {
           shrunk ? "h-9 opacity-90 md:h-14" : "h-12 opacity-100 md:h-24"
         }`}
       />
-    </a>
+    </Link>
   );
 }
