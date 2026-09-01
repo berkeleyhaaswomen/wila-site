@@ -18,6 +18,10 @@ export default function Nav() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
 
+  // Which "/#section" link is currently in view. Null means none of them,
+  // which is the hero, so Home takes the marker.
+  const [section, setSection] = useState<string | null>(null);
+
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
     onScroll();
@@ -28,8 +32,66 @@ export default function Nav() {
   // Close the sheet whenever the route changes.
   useEffect(() => setOpen(false), [pathname]);
 
-  const isActive = (href: string) =>
-    href.startsWith("/#") ? false : pathname === href;
+  /**
+   * Scroll-spy for the hash links.
+   *
+   * Highlighting by pathname alone left Home lit the whole way down the home
+   * page, so Events and Contact never took the marker. This picks whichever
+   * of those sections has passed the reading line, and falls back to Home
+   * above the first one.
+   *
+   * Only on the home page: "/#contact" points at the home page's CTA, and the
+   * About and Board pages happen to render a section with the same id, so
+   * spying there would light up a link for a page you are not on.
+   */
+  useEffect(() => {
+    if (pathname !== "/") {
+      setSection(null);
+      return;
+    }
+
+    const ids = LINKS.filter((l) => l.href.startsWith("/#")).map((l) =>
+      l.href.slice(2)
+    );
+
+    let queued = false;
+    let frame = 0;
+
+    const update = () => {
+      queued = false;
+      const line = window.innerHeight * 0.35;
+      let current: string | null = null;
+      for (const id of ids) {
+        const el = document.getElementById(id);
+        if (!el) continue;
+        const { top, bottom } = el.getBoundingClientRect();
+        if (top <= line && bottom > line) current = id;
+      }
+      setSection((prev) => (prev === current ? prev : current));
+    };
+
+    const onScroll = () => {
+      if (queued) return;
+      queued = true;
+      frame = requestAnimationFrame(update);
+    };
+
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, [pathname]);
+
+  const isActive = (href: string) => {
+    if (href.startsWith("/#")) return pathname === "/" && section === href.slice(2);
+    // Home only holds the marker while no section has taken it.
+    if (href === "/") return pathname === "/" && section === null;
+    return pathname === href;
+  };
 
   return (
     <header
