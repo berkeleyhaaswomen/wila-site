@@ -1,64 +1,72 @@
 # WILA — Women in Leadership Alumnae
 
-Refreshed site for the Berkeley Haas Women in Leadership Alumnae network.
-Next.js 14 + Tailwind CSS + Sanity CMS.
+Site for the Berkeley Haas Women in Leadership Alumnae network.
+Next.js 14 + Tailwind CSS + Postgres.
 
-Board members manage all content — events, alumnae spotlight, board list, hero
-copy — through an embedded Studio at **`/studio`**. No code required.
+Board members manage events and the alumnae spotlight through an admin site
+built into the app at **`/admin`**, reachable from the "Administrator? Sign in
+here." link in the footer. No code required.
 
 ## What's in this repo
 
-- `app/` — Next.js App Router pages (site + `/studio` route)
-- `components/` — React components for each section
-- `sanity/` — CMS schemas and Studio structure
-- `sanity.config.ts` — Studio configuration
-- `lib/content.ts` — content fetch layer with hardcoded fallbacks
-- `ADMIN.md` — **step-by-step admin + roles guide (start here)**
+- `app/` — Next.js App Router: the public site, `/admin`, and the upload route
+- `components/` — public site sections; `components/admin/` — admin UI
+- `db/schema.sql` — database schema (idempotent)
+- `lib/db.ts`, `lib/repo.ts` — Postgres connection and queries
+- `lib/auth.ts` — password hashing, sessions, role guards
+- `lib/content.ts` — public content layer, with hardcoded fallbacks
+- `scripts/` — migrate, create-admin, verify-sql
+- `ADMIN.md` — **setup, roles, and everyday tasks (start here)**
+- `ONBOARDING.md` — the guide to hand to a new board member
 
 ## Quick start (developer)
 
 ```bash
 cp .env.example .env.local
-# Fill in NEXT_PUBLIC_SANITY_PROJECT_ID (see ADMIN.md step 2)
+# Fill in DATABASE_URL and AUTH_SECRET (see ADMIN.md steps 1–2)
 
 npm install
+npm run db:migrate
+npm run admin:create
 npm run dev
 ```
 
 - Site: <http://localhost:3000>
-- Studio: <http://localhost:3000/studio>
+- Admin: <http://localhost:3000/admin>
 
-The site builds and runs even without a Sanity project — it falls back to the
+The public site builds and runs without a database — it falls back to the
 hardcoded content in `lib/content.ts`.
 
-## Deploy (production)
+## Roles
 
-Vercel is the recommended host — see **ADMIN.md** for the walkthrough. TL;DR:
+**Super admin** — everything, including managing who has access.
+**Admin** — all content, no user management.
+
+Enforced server-side in `lib/auth.ts` (`requireUser` / `requireSuperadmin`).
+Details in **[ADMIN.md](./ADMIN.md)**.
+
+## Checks
 
 ```bash
-vercel --prod
+npx tsc --noEmit    # types
+npm run db:verify   # schema + every query, against in-process Postgres
+npm run build       # production build
 ```
 
-Add the three `NEXT_PUBLIC_SANITY_*` env vars in the Vercel dashboard, point
-`wila.haasalumni.org` at Vercel, done.
+## Deploy
 
-## Roles & permissions
-
-Managed in Sanity (Administrator / Editor / Viewer). Full details in
-**[ADMIN.md](./ADMIN.md)** → "Roles & Permissions".
-
-## Editing content
-
-See **[ADMIN.md](./ADMIN.md)** → "Everyday content tasks" for the full guide
-to adding events, rotating the spotlight, updating the board, and editing
-hero copy.
+Vercel. Set `DATABASE_URL` and `AUTH_SECRET` (and optionally
+`BLOB_READ_WRITE_TOKEN` for photo uploads) in the project's environment
+variables, and run the migration once against the production database. Full
+walkthrough in **[ADMIN.md](./ADMIN.md)**.
 
 ## Stack
 
 - Next.js 14.2 (App Router, React 18, TypeScript)
 - Tailwind CSS 3.4
-- Sanity 3.57 (embedded Studio via `next-sanity`)
-- Zero external image dependencies — inline SVG art
+- Postgres via `pg` — works with Neon, Supabase, Vercel Postgres, or your own
+- bcrypt password hashing, JWT session cookie (`jose`)
+- Vercel Blob for optional photo uploads
 
 ## License
 

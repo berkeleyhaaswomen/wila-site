@@ -1,16 +1,28 @@
-name: Deploy to GitHub Pages
+# DISABLED — GitHub Pages can no longer host this site.
+#
+# The admin site at /admin needs a server: it uses Server Actions for sign-in
+# and for saving events and spotlights, dynamic routes for /admin/events/[id],
+# and an API route for photo uploads. GitHub Pages serves static files only, so
+# `next build` with STATIC_EXPORT=true now fails with:
+#
+#     Server Actions are not supported with static export.
+#
+# The site is deployed on Vercel, which runs the server — see ADMIN.md step 5.
+# This file is kept (rather than deleted) so the history and the Pages setup are
+# easy to find if GitHub Pages is ever wanted again for a static-only variant.
+#
+# To re-enable you would need to drop the admin site, or split it into its own
+# separately-hosted app.
+#
+# The automatic `push` and `repository_dispatch` triggers are removed so this
+# can't fail on every push to main. `workflow_dispatch` is left in place, which
+# means it only ever runs if someone deliberately presses "Run workflow" — and
+# it will fail until the notes above are addressed.
+
+name: Deploy to GitHub Pages (disabled)
 
 on:
-  # Auto-deploy every push to main
-  push:
-    branches: [main]
-  # Allow the "Run workflow" button in the Actions tab
   workflow_dispatch:
-  # Allow a Sanity webhook to trigger a rebuild:
-  # POST to https://api.github.com/repos/OWNER/REPO/dispatches
-  #   with { "event_type": "sanity-publish" }
-  repository_dispatch:
-    types: [sanity-publish]
 
 permissions:
   contents: read
@@ -35,15 +47,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Remove Studio route (deployed separately via sanity deploy)
-        run: rm -rf app/studio
-
       - name: Build static site
         env:
           STATIC_EXPORT: "true"
-          NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_SANITY_PROJECT_ID }}
-          NEXT_PUBLIC_SANITY_DATASET: ${{ secrets.NEXT_PUBLIC_SANITY_DATASET || 'production' }}
-          NEXT_PUBLIC_SANITY_API_VERSION: "2025-01-01"
         run: npm run build
 
       # GitHub Pages doesn't serve _next paths under _* prefixes by default.

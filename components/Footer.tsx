@@ -72,7 +72,15 @@ export default function Footer() {
 
       <div className="container-tight mt-10 flex flex-col items-start justify-between gap-3 border-t border-white/10 pt-6 text-xs text-white/50 md:flex-row md:items-center">
         <div>© {year} Women in Leadership Alumnae. All rights reserved.</div>
-        <div>An independent volunteer-led group affiliated with UC Berkeley Haas Alumni Network.</div>
+        <div className="flex flex-col gap-3 md:flex-row md:items-center md:gap-6">
+          <span>An independent volunteer-led group affiliated with UC Berkeley Haas Alumni Network.</span>
+          <a
+            href="/admin"
+            className="shrink-0 font-semibold text-white/70 underline decoration-white/30 underline-offset-4 transition hover:text-california-gold hover:decoration-california-gold"
+          >
+            Administrator? Sign in here.
+          </a>
+        </div>
       </div>
     </footer>
   );
