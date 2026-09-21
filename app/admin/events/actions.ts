@@ -9,11 +9,13 @@ import {
   createEvent,
   updateEvent,
   deleteEvent,
+  deleteEventPhoto,
   eventSlugTaken,
   type EventInput
 } from "@/lib/repo";
 import { slugify } from "@/lib/slug";
-import { pacificInputToISO } from "@/lib/format";
+import { zonedInputToISO } from "@/lib/format";
+import { EVENT_TIME_ZONES } from "@/lib/types";
 
 export type EventFormState = { error?: string };
 
@@ -38,6 +40,14 @@ const schema = z.object({
     .trim()
     .max(500)
     .refine((v) => !v || /^https?:\/\//.test(v), "Link must start with http:// or https://")
+    .optional(),
+  timeZone: z
+    .string()
+    .trim()
+    .refine(
+      (v) => !v || EVENT_TIME_ZONES.some((z) => z.id === v),
+      "Pick a time zone from the list."
+    )
     .optional()
 });
 
@@ -54,17 +64,24 @@ function parse(formData: FormData) {
     format: String(formData.get("format") ?? ""),
     price: String(formData.get("price") ?? ""),
     blurb: String(formData.get("blurb") ?? ""),
-    rsvpUrl: String(formData.get("rsvpUrl") ?? "")
+    rsvpUrl: String(formData.get("rsvpUrl") ?? ""),
+    timeZone: String(formData.get("timeZone") ?? "")
   });
 }
 
+/** Pacific is stored as null, so only non-default zones are recorded. */
+const storedZone = (tz?: string) =>
+  tz && tz !== "America/Los_Angeles" ? tz : null;
+
 function toInput(v: z.infer<typeof schema>): EventInput {
+  const zone = v.timeZone || "America/Los_Angeles";
   return {
     title: v.title,
     slug: v.slug,
-    // Form times are Pacific wall-clock, not the server's zone.
-    startsAt: pacificInputToISO(v.startsAt)!,
-    endsAt: v.endsAt ? pacificInputToISO(v.endsAt) : null,
+    // Form times are wall-clock in the event's zone, not the server's.
+    startsAt: zonedInputToISO(v.startsAt, zone)!,
+    endsAt: v.endsAt ? zonedInputToISO(v.endsAt, zone) : null,
+    timeZone: storedZone(v.timeZone),
     location: v.location,
     format: v.format,
     price: v.price || null,
@@ -92,10 +109,10 @@ export async function saveEvent(
     return { error: parsed.error.issues[0]?.message ?? "Please check the form." };
   }
 
-  if (!pacificInputToISO(parsed.data.startsAt)) {
+  if (!zonedInputToISO(parsed.data.startsAt)) {
     return { error: "Start date and time isn't a valid date." };
   }
-  if (parsed.data.endsAt && !pacificInputToISO(parsed.data.endsAt)) {
+  if (parsed.data.endsAt && !zonedInputToISO(parsed.data.endsAt)) {
     return { error: "End date and time isn't a valid date." };
   }
 
@@ -122,4 +139,16 @@ export async function removeEvent(formData: FormData): Promise<void> {
   await deleteEvent(id);
   revalidateEvents();
   redirect("/admin/events?deleted=1");
+}
+
+/** Removes one photo from an event, along with its stored image. */
+export async function removeEventPhoto(formData: FormData): Promise<void> {
+  await requireUser("/admin/events");
+  const id = String(formData.get("photoId") ?? "").trim();
+  const eventId = String(formData.get("eventId") ?? "").trim();
+  if (!id) return;
+  await deleteEventPhoto(id);
+  revalidatePath("/photos");
+  revalidatePath("/events");
+  if (eventId) revalidatePath(`/admin/events/${eventId}`);
 }

@@ -68,6 +68,11 @@ CREATE TABLE IF NOT EXISTS events (
 
 CREATE INDEX IF NOT EXISTS events_starts_at_idx ON events (starts_at DESC);
 
+-- The zone an event's times are shown in. Null means Pacific, which is where
+-- almost everything happens; set it for chapters elsewhere so a 6pm London
+-- dinner does not read as a 10am event.
+ALTER TABLE events ADD COLUMN IF NOT EXISTS time_zone text;
+
 -- ----------------------------------------------------------- spotlights ----
 CREATE TABLE IF NOT EXISTS spotlights (
   id              uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -110,6 +115,27 @@ CREATE TABLE IF NOT EXISTS images (
   created_at timestamptz NOT NULL DEFAULT now()
 );
 
+-- Spotlight fields from the 2026 spotlight template: a one-line WILA
+-- involvement and a call to action. The template has no pull quote, so quote
+-- is optional now rather than required.
+ALTER TABLE spotlights ADD COLUMN IF NOT EXISTS involvement text;
+ALTER TABLE spotlights ADD COLUMN IF NOT EXISTS cta text;
+ALTER TABLE spotlights ALTER COLUMN quote DROP NOT NULL;
+
+-- --------------------------------------------------------- event_photos ----
+-- Photos attached to an event after it happens. They feed the Photos page,
+-- grouped by event, newest event first. Deleting an event takes its photos.
+CREATE TABLE IF NOT EXISTS event_photos (
+  id         uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  event_id   uuid NOT NULL REFERENCES events(id) ON DELETE CASCADE,
+  url        text NOT NULL,
+  width      integer,
+  height     integer,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS event_photos_event_idx ON event_photos (event_id, created_at);
+
 -- -------------------------------------------------------------- members ----
 -- People who asked to join the network through the public form.
 --
@@ -132,6 +158,11 @@ CREATE UNIQUE INDEX IF NOT EXISTS members_email_lower_idx
   ON members (lower(email));
 
 CREATE INDEX IF NOT EXISTS members_created_at_idx ON members (created_at DESC);
+
+-- First and last name separately, matching the attendee tracking sheet. The
+-- combined name column stays, filled from the two, so older rows still read.
+ALTER TABLE members ADD COLUMN IF NOT EXISTS first_name text;
+ALTER TABLE members ADD COLUMN IF NOT EXISTS last_name text;
 
 -- ------------------------------------------------------------ updated_at ---
 CREATE OR REPLACE FUNCTION set_updated_at() RETURNS trigger AS $$

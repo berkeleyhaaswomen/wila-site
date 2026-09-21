@@ -24,7 +24,7 @@ export default function Footer() {
           <ul className="mt-4 space-y-2 text-sm">
             <li><a className="transition hover:text-white" href="/">Home</a></li>
             <li><a className="transition hover:text-white" href="/about">About</a></li>
-            <li><a className="transition hover:text-white" href="/#events">Events</a></li>
+            <li><a className="transition hover:text-white" href="/events">Events</a></li>
             <li><a className="transition hover:text-white" href="/photos">Photos</a></li>
             <li><a className="transition hover:text-white" href="/board">Board</a></li>
             <li><a className="transition hover:text-white" href="/#spotlight">Spotlight</a></li>
@@ -45,13 +45,13 @@ export default function Footer() {
             2220 Piedmont Ave, Berkeley, CA 94720
           </p>
           <div className="mt-4 flex gap-3">
-            <a aria-label="LinkedIn" href="https://www.linkedin.com/" target="_blank" rel="noreferrer noopener"
+            <a aria-label="WILA on LinkedIn" href="https://www.linkedin.com/groups/3814431/" target="_blank" rel="noreferrer noopener"
               className="grid h-9 w-9 place-items-center rounded-full border border-white/15 hover:bg-white hover:text-berkeley-blue">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                 <path d="M4.98 3.5a2.5 2.5 0 1 1 0 5.001 2.5 2.5 0 0 1 0-5.001zM3 9h4v12H3zM9 9h3.8v1.71h.05c.53-1 1.83-2.06 3.77-2.06 4.03 0 4.78 2.65 4.78 6.1V21H17.6v-5.32c0-1.27-.02-2.9-1.77-2.9-1.77 0-2.04 1.38-2.04 2.8V21H9z"/>
               </svg>
             </a>
-            <a aria-label="Instagram" href="https://www.instagram.com/" target="_blank" rel="noreferrer noopener"
+            <a aria-label="WILA on Instagram" href="https://www.instagram.com/haas_wila/" target="_blank" rel="noreferrer noopener"
               className="grid h-9 w-9 place-items-center rounded-full border border-white/15 hover:bg-white hover:text-berkeley-blue">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                 <rect x="3" y="3" width="18" height="18" rx="5"/>

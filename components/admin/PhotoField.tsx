@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { Label } from "./Field";
+import { shrinkForUpload } from "@/lib/clientImage";
 
 const inputClass =
   "mt-1.5 w-full rounded-lg border border-black/15 bg-white px-3 py-2 text-sm text-ink " +
@@ -32,7 +33,7 @@ export default function PhotoField({
     setError(null);
     try {
       const body = new FormData();
-      body.append("file", file);
+      body.append("file", await shrinkForUpload(file));
       const res = await fetch("/api/admin/upload", { method: "POST", body });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error ?? "Upload failed.");

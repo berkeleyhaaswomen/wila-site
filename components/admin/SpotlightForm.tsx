@@ -4,15 +4,15 @@ import Link from "next/link";
 import { useFormState, useFormStatus } from "react-dom";
 
 import { saveSpotlight, removeSpotlight } from "@/app/admin/spotlights/actions";
-import {
-  TextField,
-  TextArea,
-  SelectField,
-  FormError,
-  Card
-} from "@/components/admin/Field";
+import { TextField, TextArea, FormError, Card } from "@/components/admin/Field";
 import PhotoField from "@/components/admin/PhotoField";
-import { PILLARS, type SpotlightItem } from "@/lib/types";
+import type { SpotlightItem } from "@/lib/types";
+
+/**
+ * Laid out as the seven numbered questions of the 2026 spotlight template, in
+ * the same order and wording, so whoever is entering a submission can copy
+ * answers straight across from the document without hunting for fields.
+ */
 
 function SaveButton() {
   const { pending } = useFormStatus();
@@ -24,6 +24,17 @@ function SaveButton() {
     >
       {pending ? "Saving…" : "Save spotlight"}
     </button>
+  );
+}
+
+function Step({ n, children }: { n: number; children: React.ReactNode }) {
+  return (
+    <div className="flex gap-4">
+      <span className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-berkeley-blue/10 text-[11px] font-semibold text-berkeley-blue">
+        {n}
+      </span>
+      <div className="min-w-0 flex-1">{children}</div>
+    </div>
   );
 }
 
@@ -44,93 +55,108 @@ export default function SpotlightForm({
         <FormError message={state?.error} />
 
         <Card>
-          <h2 className="mb-5 font-display text-sm uppercase tracking-[0.12em] text-ink">Who she is</h2>
-          <div className="grid gap-5 sm:grid-cols-2">
-            <TextField
-              name="name"
-              label="Alumna name"
-              required
-              maxLength={120}
-              defaultValue={spotlight?.name}
-              placeholder="Her full name"
-            />
-            <TextField
-              name="gradYear"
-              label="Class year"
-              hint="optional"
-              maxLength={40}
-              defaultValue={spotlight?.gradYear}
-              placeholder="MBA ’18"
-            />
-            <div className="sm:col-span-2">
+          <h2 className="mb-2 font-display text-sm uppercase tracking-[0.12em] text-ink">
+            From the spotlight template
+          </h2>
+          <p className="mb-7 text-sm text-ink/55">
+            Same seven questions, same order. Light edits are fine: the aim is
+            connection, not promotion.
+          </p>
+
+          <div className="space-y-7">
+            <Step n={1}>
+              <TextField
+                name="name"
+                label="Full name"
+                hint="as she would like it to appear publicly"
+                required
+                maxLength={120}
+                defaultValue={spotlight?.name}
+                placeholder="Her full name"
+              />
+            </Step>
+
+            <Step n={2}>
+              <PhotoField
+                defaultValue={spotlight?.photoUrl}
+                uploadsEnabled={uploadsEnabled}
+              />
+              <p className="mt-2 text-xs text-ink/45">
+                The template asks for a square headshot, at least 500×500.
+              </p>
+            </Step>
+
+            <Step n={3}>
+              <TextField
+                name="gradYear"
+                label="Year graduated and program"
+                maxLength={80}
+                defaultValue={spotlight?.gradYear}
+                placeholder="MBA, Class of 2015"
+              />
+            </Step>
+
+            <Step n={4}>
               <TextField
                 name="title"
-                label="Current title"
-                hint="the big headline on the card"
+                label="Current title and company"
                 maxLength={160}
                 defaultValue={spotlight?.title}
-                placeholder="Her role and company"
+                placeholder="VP of Marketing, ABC Corp"
               />
-            </div>
-          </div>
-        </Card>
+            </Step>
 
-        <Card>
-          <h2 className="mb-5 font-display text-sm uppercase tracking-[0.12em] text-ink">Her words</h2>
-          <div className="space-y-5">
-            <TextArea
-              name="quote"
-              label="Quote"
-              required
-              rows={6}
-              maxLength={1200}
-              defaultValue={spotlight?.quote}
-              hint="shown as the pull quote, include the curly quotation marks"
-              placeholder="A few sentences in her own voice, with the curly quotation marks."
-            />
-            <TextArea
-              name="bio"
-              label="Short bio"
-              hint="optional"
-              rows={4}
-              maxLength={1500}
-              defaultValue={spotlight?.bio}
-              placeholder="A short third-person bio: what she does now, and how she is involved in WILA."
-            />
-          </div>
-        </Card>
-
-        <Card>
-          <h2 className="mb-5 font-display text-sm uppercase tracking-[0.12em] text-ink">Photo and links</h2>
-          <div className="space-y-5">
-            <PhotoField
-              defaultValue={spotlight?.photoUrl}
-              uploadsEnabled={uploadsEnabled}
-            />
-            <div className="grid gap-5 sm:grid-cols-2">
+            <Step n={5}>
               <TextField
-                name="linkedin"
-                label="LinkedIn URL"
-                hint="optional"
-                type="url"
-                maxLength={500}
-                defaultValue={spotlight?.linkedin}
-                placeholder="https://www.linkedin.com/in/…"
+                name="involvement"
+                label="WILA involvement"
+                hint="one line"
+                maxLength={160}
+                defaultValue={spotlight?.involvement}
+                placeholder="Organizer, SF Chapter Fall Mixer"
               />
-              <TextField
-                name="nominateUrl"
-                label="'Nominate an alumna' link"
-                hint="defaults to #contact"
-                maxLength={500}
-                defaultValue={spotlight?.nominateUrl}
-                placeholder="#contact"
+            </Step>
+
+            <Step n={6}>
+              <TextArea
+                name="bio"
+                label="Bio"
+                hint="3 to 5 sentences, third person"
+                required
+                rows={6}
+                maxLength={1500}
+                defaultValue={spotlight?.bio}
+                placeholder="What she is proud of, what Haas or WILA has meant to her, what she cares about outside work, advice for other Haas women. Two or three of those, not all."
               />
-            </div>
+            </Step>
+
+            <Step n={7}>
+              <div className="grid gap-5 sm:grid-cols-2">
+                <TextField
+                  name="linkedin"
+                  label="LinkedIn or other way to connect"
+                  type="url"
+                  maxLength={500}
+                  defaultValue={spotlight?.linkedin}
+                  placeholder="https://www.linkedin.com/in/…"
+                />
+                <TextField
+                  name="cta"
+                  label="Call to action"
+                  hint="optional"
+                  maxLength={200}
+                  defaultValue={spotlight?.cta}
+                  placeholder="Connect with me on LinkedIn."
+                />
+              </div>
+            </Step>
           </div>
         </Card>
 
         <Card>
-          <h2 className="mb-5 font-display text-sm uppercase tracking-[0.12em] text-ink">Card details</h2>
+          <h2 className="mb-5 font-display text-sm uppercase tracking-[0.12em] text-ink">
+            Publishing
+          </h2>
           <div className="grid gap-5 sm:grid-cols-2">
             <TextField
               name="spotlightLabel"
@@ -138,7 +164,7 @@ export default function SpotlightForm({
               hint="the badge over the photo"
               maxLength={40}
               defaultValue={spotlight?.spotlightLabel}
-              placeholder="Q2 2026 Spotlight"
+              placeholder="Q3 2026 Spotlight"
             />
             <TextField
               name="featuredFrom"
@@ -147,33 +173,7 @@ export default function SpotlightForm({
               type="date"
               defaultValue={spotlight?.featuredFrom}
             />
-            <SelectField
-              name="pillar"
-              label="Pillar"
-              options={PILLARS}
-              includeBlank="None"
-              defaultValue={spotlight?.pillar}
-            />
-            <TextField
-              name="chapter"
-              label="Chapter"
-              maxLength={60}
-              defaultValue={spotlight?.chapter}
-              placeholder="Bay Area"
-            />
-            <TextField
-              name="mentorCohort"
-              label="Mentor cohort"
-              maxLength={60}
-              defaultValue={spotlight?.mentorCohort}
-              placeholder="2024 – present"
-            />
           </div>
-          <p className="mt-4 text-xs leading-relaxed text-ink/50">
-            Pillar, Chapter, and Mentor cohort make up the three-column strip at
-            the bottom of the card. Leave any of them blank and it&apos;s left
-            out rather than rendering an empty column.
-          </p>
         </Card>
 
         <div className="flex items-center gap-3">
@@ -188,14 +188,9 @@ export default function SpotlightForm({
       </form>
 
       {spotlight?.id && (
-        <form
-          action={removeSpotlight}
-          className="mt-10 border-t border-black/10 pt-6"
-        >
+        <form action={removeSpotlight} className="mt-10 border-t border-black/10 pt-6">
           <input type="hidden" name="id" value={spotlight.id} />
-          <h2 className="text-sm font-semibold text-ink">
-            Delete this spotlight
-          </h2>
+          <h2 className="text-sm font-semibold text-ink">Delete this spotlight</h2>
           <p className="mt-1 text-sm text-ink/60">
             If this is the one currently on the homepage, the next most recent
             spotlight takes its place. This cannot be undone.

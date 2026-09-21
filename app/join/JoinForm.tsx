@@ -29,7 +29,7 @@ function Submit() {
       disabled={pending}
       className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-full bg-california-gold px-8 py-4 text-sm font-semibold uppercase tracking-[0.12em] text-ink transition hover:bg-white disabled:opacity-60 sm:w-auto"
     >
-      {pending ? "Sending…" : "Become a member"}
+      {pending ? "Sending…" : "Join Our Community"}
     </button>
   );
 }
@@ -41,11 +41,11 @@ export default function JoinForm() {
     return (
       <div className="rounded-2xl border border-california-gold/30 bg-california-gold/10 p-8 md:p-10">
         <h2 className="display text-[clamp(1.4rem,3vw,2.2rem)] text-white">
-          You are on the list
+          Welcome to the community
         </h2>
         <p className="mt-4 max-w-md text-[15px] leading-relaxed text-white/75">
-          Thank you. A board member will check your details and add you to the
-          mailing list. You will hear from us before the next event.
+          Thank you for joining. You will hear from us about upcoming events,
+          mentorship openings, and the quarterly spotlight.
         </p>
         <a
           href="/"
@@ -76,35 +76,45 @@ export default function JoinForm() {
         </label>
       </div>
 
+      {/* Same fields, same order, as the WILA attendee tracking sheet. */}
       <div className="grid gap-6 sm:grid-cols-2">
         <label className="block">
-          <Label>Full name</Label>
-          <input className={field} name="name" required autoComplete="name" placeholder="Jane Doe" />
-        </label>
-        <label className="block">
-          <Label>Email</Label>
+          <Label>First name</Label>
           <input
             className={field}
-            name="email"
-            type="email"
+            name="firstName"
             required
-            autoComplete="email"
-            placeholder="you@example.com"
+            autoComplete="given-name"
+            placeholder="Jane"
           />
         </label>
         <label className="block">
-          <Label hint="four digits">Graduation year</Label>
+          <Label>Last name</Label>
           <input
             className={field}
-            name="gradYear"
-            inputMode="numeric"
+            name="lastName"
             required
-            placeholder="2018"
-            maxLength={4}
+            autoComplete="family-name"
+            placeholder="Doe"
           />
         </label>
+      </div>
+
+      <label className="block">
+        <Label>Email address</Label>
+        <input
+          className={field}
+          name="email"
+          type="email"
+          required
+          autoComplete="email"
+          placeholder="you@example.com"
+        />
+      </label>
+
+      <div className="grid gap-6 sm:grid-cols-2">
         <label className="block">
-          <Label>Program</Label>
+          <Label>Degree program</Label>
           <select className={field} name="program" required defaultValue="">
             <option value="" disabled>
               Choose your program
@@ -116,23 +126,32 @@ export default function JoinForm() {
             ))}
           </select>
         </label>
+        <label className="block">
+          <Label hint="four digits">Grad year</Label>
+          <input
+            className={field}
+            name="gradYear"
+            inputMode="numeric"
+            required
+            placeholder="2018"
+            maxLength={4}
+          />
+        </label>
       </div>
 
       <label className="block">
-        <Label hint="this is how we verify you">LinkedIn profile</Label>
+        <Label hint="optional, helps us verify">LinkedIn profile</Label>
         <input
           className={field}
           name="linkedin"
           type="url"
-          required
           placeholder="https://www.linkedin.com/in/yourname"
         />
       </label>
 
       <p className="text-xs leading-relaxed text-white/45">
-        We use your LinkedIn profile to confirm you studied at Berkeley Haas.
-        Your details are only used to send WILA news and event invitations, and
-        are never shared outside the board.
+        Your details are only used to send WILA news and event invitations,
+        and are never shared outside the board.
       </p>
 
       <Submit />

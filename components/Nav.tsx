@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 const LINKS = [
   { href: "/", label: "Home", exact: true },
   { href: "/about", label: "About" },
-  { href: "/#events", label: "Events" },
+  { href: "/events", label: "Events" },
   { href: "/photos", label: "Photos" },
   { href: "/board", label: "Board" },
   { href: "/#contact", label: "Contact" }
@@ -121,7 +121,7 @@ export default function Nav() {
             href="/join"
             className="inline-flex items-center justify-center rounded-full border border-california-gold/70 bg-california-gold/15 px-5 py-2 text-[13px] font-semibold uppercase tracking-[0.14em] text-california-gold transition hover:bg-california-gold hover:text-ink focus:outline-none focus:ring-2 focus:ring-california-gold focus:ring-offset-2 focus:ring-offset-berkeley-blue"
           >
-            Join us
+            Join Our Community
           </a>
         </nav>
 
@@ -158,7 +158,7 @@ export default function Nav() {
               href="/join"
               className="mt-4 inline-flex items-center justify-center rounded-full border border-california-gold/70 bg-california-gold/15 px-5 py-2.5 text-[13px] font-semibold uppercase tracking-[0.14em] text-california-gold"
             >
-              Join us
+              Join Our Community
             </a>
           </div>
         </div>

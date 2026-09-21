@@ -16,20 +16,37 @@ import type { EventItem } from "./types";
  * organisation whose events are scheduled in local time, and the site has
  * always quoted them that way ("6:00 – 7:00 PM PDT").
  */
-const EVENT_TIME_ZONE = "America/Los_Angeles";
+export const EVENT_TIME_ZONE = "America/Los_Angeles";
+
+/** The zone to show an event in: its own if set, otherwise Pacific. */
+export function zoneOf(e: { timeZone?: string | null }): string {
+  return e.timeZone || EVENT_TIME_ZONE;
+}
 
 export function formatEventDate(e: EventItem): string {
   if (e.date) return e.date;
   if (!e.startsAt) return "TBD";
   const d = new Date(e.startsAt);
+  const timeZone = zoneOf(e);
+
+  // All-day events are stored at local midnight. Showing "12:00 AM" for those
+  // reads as a real start time, so a midnight start prints as a date alone.
+  const clock = new Intl.DateTimeFormat("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+    timeZone
+  }).format(d);
+  const allDay = clock === "00:00" || clock === "24:00";
+
   return d.toLocaleString("en-US", {
     month: "long",
     day: "numeric",
     year: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-    timeZoneName: "short",
-    timeZone: EVENT_TIME_ZONE
+    ...(allDay
+      ? {}
+      : { hour: "numeric", minute: "2-digit", timeZoneName: "short" }),
+    timeZone
   });
 }
 
@@ -43,6 +60,10 @@ export function partitionEvents(items: EventItem[]) {
     if (isFinite(ts) && ts >= now) upcoming.push(e);
     else past.push(e);
   }
+  const at = (e: EventItem) => (e.startsAt ? new Date(e.startsAt).getTime() : 0);
+  // Soonest upcoming first; most recent past first.
+  upcoming.sort((a, b) => at(a) - at(b));
+  past.sort((a, b) => at(b) - at(a));
   return { upcoming, past };
 }
 
@@ -76,7 +97,7 @@ function tzOffsetMs(at: Date, tz: string): number {
 
 /**
  * Turns a <input type="datetime-local"> value ("2027-06-18T09:30") into a UTC
- * ISO string, reading it as Pacific.
+ * ISO string, reading it in the given zone (Pacific unless told otherwise).
  *
  * `new Date("2027-06-18T09:30")` would read it in whatever zone the machine
  * happens to be in: Pacific on a Bay Area laptop, UTC on Vercel. That
@@ -85,22 +106,31 @@ function tzOffsetMs(at: Date, tz: string): number {
  * Two passes so the offset is looked up at the right instant across a DST
  * boundary; the second pass is a no-op the rest of the year.
  */
-export function pacificInputToISO(naive: string): string | null {
+export function zonedInputToISO(
+  naive: string,
+  timeZone: string = EVENT_TIME_ZONE
+): string | null {
   if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(naive)) return null;
   const asUtc = new Date(`${naive.slice(0, 16)}:00Z`);
   if (Number.isNaN(asUtc.getTime())) return null;
-  let utc = new Date(asUtc.getTime() - tzOffsetMs(asUtc, EVENT_TIME_ZONE));
-  utc = new Date(asUtc.getTime() - tzOffsetMs(utc, EVENT_TIME_ZONE));
+  let utc = new Date(asUtc.getTime() - tzOffsetMs(asUtc, timeZone));
+  utc = new Date(asUtc.getTime() - tzOffsetMs(utc, timeZone));
   return utc.toISOString();
 }
 
-/** The inverse: a UTC ISO string as the Pacific wall-clock value the input wants. */
-export function isoToPacificInput(iso?: string | null): string {
+/** Pacific shorthand, kept for existing callers. */
+export const pacificInputToISO = (naive: string) => zonedInputToISO(naive);
+
+/** The inverse: a UTC ISO string as the wall-clock value the input wants. */
+export function isoToZonedInput(
+  iso?: string | null,
+  timeZone: string = EVENT_TIME_ZONE
+): string {
   if (!iso) return "";
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return "";
   const p = new Intl.DateTimeFormat("en-CA", {
-    timeZone: EVENT_TIME_ZONE,
+    timeZone,
     hour12: false,
     year: "numeric",
     month: "2-digit",
@@ -116,3 +146,6 @@ export function isoToPacificInput(iso?: string | null): string {
   const hour = p.hour === "24" ? "00" : p.hour;
   return `${p.year}-${p.month}-${p.day}T${hour}:${p.minute}`;
 }
+
+/** Pacific shorthand, kept for existing callers. */
+export const isoToPacificInput = (iso?: string | null) => isoToZonedInput(iso);

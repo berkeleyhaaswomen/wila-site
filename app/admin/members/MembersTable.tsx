@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 
 import { removeMember } from "./actions";
-import { MEMBER_FIELDS, type MemberField } from "@/lib/types";
+import { MEMBER_FIELDS, ATTENDEE_SHEET_COLUMNS, type MemberField } from "@/lib/types";
 import type { MemberRow } from "@/lib/repo";
 
 /**
@@ -38,8 +38,17 @@ function formatValue(m: MemberRow, key: MemberField): string {
   return String(raw);
 }
 
+type Column = { label: string; get: (m: MemberRow) => string };
+
 export default function MembersTable({ members }: { members: MemberRow[] }) {
-  const [selected, setSelected] = useState<MemberField[]>(["name", "email"]);
+  const [selected, setSelected] = useState<MemberField[]>([
+    "firstName",
+    "lastName",
+    "email"
+  ]);
+  // "sheet" reproduces the WILA attendee tracking sheet column for column.
+  const [layout, setLayout] = useState<"custom" | "sheet">("custom");
+  const [withHeader, setWithHeader] = useState(true);
   const [copied, setCopied] = useState<string | null>(null);
 
   const toggle = (key: MemberField) =>
@@ -47,30 +56,36 @@ export default function MembersTable({ members }: { members: MemberRow[] }) {
       prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]
     );
 
-  // Keep the export column order stable, matching the table.
-  const columns = useMemo(
-    () => MEMBER_FIELDS.filter((f) => selected.includes(f.key)),
-    [selected]
-  );
+  const columns: Column[] = useMemo(() => {
+    if (layout === "sheet") {
+      return ATTENDEE_SHEET_COLUMNS.map((c) => ({
+        label: c.label,
+        get: (m: MemberRow) => (c.field ? formatValue(m, c.field) : "")
+      }));
+    }
+    // Keep the column order stable, matching the table.
+    return MEMBER_FIELDS.filter((f) => selected.includes(f.key)).map((f) => ({
+      label: f.label,
+      get: (m: MemberRow) => formatValue(m, f.key)
+    }));
+  }, [layout, selected]);
 
   const csv = useMemo(() => {
     if (!columns.length) return "";
+    const body = members.map((m) => columns.map((c) => csvCell(c.get(m))).join(","));
     const head = columns.map((c) => csvCell(c.label)).join(",");
-    const body = members.map((m) =>
-      columns.map((c) => csvCell(formatValue(m, c.key))).join(",")
-    );
-    return [head, ...body].join("\r\n");
-  }, [columns, members]);
+    return (withHeader ? [head, ...body] : body).join("\r\n");
+  }, [columns, members, withHeader]);
 
-  /** Tab-separated instead, which pastes into Sheets and Excel as columns. */
+  /** Tab-separated, which pastes into Sheets and Excel as columns. */
   const tsv = useMemo(() => {
     if (!columns.length) return "";
-    const head = columns.map((c) => c.label).join("\t");
     const body = members.map((m) =>
-      columns.map((c) => formatValue(m, c.key).replace(/\t/g, " ")).join("\t")
+      columns.map((c) => c.get(m).replace(/\t/g, " ")).join("\t")
     );
-    return [head, ...body].join("\n");
-  }, [columns, members]);
+    const head = columns.map((c) => c.label).join("\t");
+    return (withHeader ? [head, ...body] : body).join("\n");
+  }, [columns, members, withHeader]);
 
   const emails = useMemo(
     () => members.map((m) => m.email).join(", "),
@@ -124,23 +139,69 @@ export default function MembersTable({ members }: { members: MemberRow[] }) {
         </div>
 
         <p className="mt-2 text-sm text-ink/60">
-          Tick the columns you need, then download a spreadsheet or copy the
-          rows straight into an email.
+          Pick a layout, then download a spreadsheet or copy the rows.
         </p>
 
-        <div className="mt-5 flex flex-wrap gap-x-6 gap-y-3">
-          {MEMBER_FIELDS.map((f) => (
-            <label key={f.key} className="flex cursor-pointer items-center gap-2.5">
-              <input
-                type="checkbox"
-                checked={selected.includes(f.key)}
-                onChange={() => toggle(f.key)}
-                className="h-4 w-4 rounded border-black/25 accent-berkeley-blue"
-              />
-              <span className="text-sm text-ink/80">{f.label}</span>
-            </label>
+        <div className="mt-5 inline-flex rounded-full border border-black/15 p-1 text-sm">
+          {(
+            [
+              ["custom", "Choose columns"],
+              ["sheet", "WILA attendee sheet"]
+            ] as const
+          ).map(([value, label]) => (
+            <button
+              key={value}
+              type="button"
+              onClick={() => setLayout(value)}
+              aria-pressed={layout === value}
+              className={`rounded-full px-4 py-1.5 font-semibold transition ${
+                layout === value
+                  ? "bg-berkeley-blue text-white"
+                  : "text-ink/60 hover:text-ink"
+              }`}
+            >
+              {label}
+            </button>
           ))}
         </div>
+
+        {layout === "custom" ? (
+          <div className="mt-5 flex flex-wrap gap-x-6 gap-y-3">
+            {MEMBER_FIELDS.map((f) => (
+              <label key={f.key} className="flex cursor-pointer items-center gap-2.5">
+                <input
+                  type="checkbox"
+                  checked={selected.includes(f.key)}
+                  onChange={() => toggle(f.key)}
+                  className="h-4 w-4 rounded border-black/25 accent-berkeley-blue"
+                />
+                <span className="text-sm text-ink/80">{f.label}</span>
+              </label>
+            ))}
+          </div>
+        ) : (
+          <p className="mt-5 max-w-2xl text-sm leading-relaxed text-ink/60">
+            All nine columns of the attendee tracking sheet, in its order and
+            with its headings. Event date, name, location and attendee status
+            come out blank for the host to fill in, since the join form does
+            not collect them.
+          </p>
+        )}
+
+        <label className="mt-5 flex w-fit cursor-pointer items-center gap-2.5">
+          <input
+            type="checkbox"
+            checked={withHeader}
+            onChange={(e) => setWithHeader(e.target.checked)}
+            className="h-4 w-4 rounded border-black/25 accent-berkeley-blue"
+          />
+          <span className="text-sm text-ink/80">
+            Include the header row
+            <span className="ml-1.5 text-ink/45">
+              (untick when pasting under headings that already exist)
+            </span>
+          </span>
+        </label>
 
         <div className="mt-6 flex flex-wrap items-center gap-2.5">
           <button
@@ -192,10 +253,11 @@ export default function MembersTable({ members }: { members: MemberRow[] }) {
         </div>
       ) : (
         <div className="mt-8 overflow-x-auto rounded-xl border border-black/10 bg-white p-2">
-          <table className="w-full min-w-[860px] text-left">
+          <table className="w-full min-w-[960px] text-left">
             <thead>
               <tr className="text-[11px] uppercase tracking-wider text-ink/50">
-                <th className="px-4 py-2 font-semibold">Name</th>
+                <th className="px-4 py-2 font-semibold">First name</th>
+                <th className="px-4 py-2 font-semibold">Last name</th>
                 <th className="px-4 py-2 font-semibold">Email</th>
                 <th className="px-4 py-2 font-semibold">Year</th>
                 <th className="px-4 py-2 font-semibold">Program</th>
@@ -207,7 +269,8 @@ export default function MembersTable({ members }: { members: MemberRow[] }) {
             <tbody>
               {members.map((m) => (
                 <tr key={m.id} className="border-t border-black/5 align-top">
-                  <td className="px-4 py-3 font-semibold text-ink">{m.name}</td>
+                  <td className="px-4 py-3 font-semibold text-ink">{m.firstName}</td>
+                  <td className="px-4 py-3 font-semibold text-ink">{m.lastName}</td>
                   <td className="px-4 py-3 text-sm">
                     <a
                       href={`mailto:${m.email}`}

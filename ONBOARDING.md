@@ -68,11 +68,17 @@ Events → **New event** → fill in the fields → **Save event**.
 Events sort themselves into "Upcoming" and "Past" based on their start date,
 so you never move them by hand. The link at the bottom of the card is labelled
 "RSVP" while the event is upcoming and "View recap" once it's passed, same
-field, so put the recap URL there after the event.
+field, so put the recap URL there after the event. If the event isn't in
+California, set **Time zone** before typing the times.
+
+**Share photos from an event**
+Events → open the event → **Add photos** → pick them all at once. They show up
+on the Photos page under that event, newest events first.
 
 **Rotate the alumnae spotlight**
-Spotlights → **New spotlight** → fill in name, quote, bio, photo, and links →
-set **Featured from** to today → **Save spotlight**.
+Spotlights → **New spotlight** → work through steps 1 to 7, which match the
+spotlight template we send nominees → set **Featured from** to today →
+**Save spotlight**.
 The homepage always shows whichever spotlight has the most recent "Featured
 from" date. The one currently live is tagged **On the homepage** in the list.
 Older ones stay for reference.
@@ -85,8 +91,8 @@ to get their addresses. Copy every email gives you a BCC-ready list.
 **Add a spotlight photo**
 On the spotlight form, either click **Upload a photo** and pick a file from
 your computer, or paste a link into the box next to it. Straight from your
-phone is fine: photos are rotated upright and resized automatically. Portrait
-orientation looks best on the card.
+phone is fine: photos are rotated upright and resized automatically. A square
+photo, at least 500 × 500, looks best on the card.
 
 ---
 

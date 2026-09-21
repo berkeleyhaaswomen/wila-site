@@ -301,6 +301,71 @@ await step("a spotlight with no featured_from sorts last, not first", async () =
   }
 });
 
+console.log("\nspotlight template");
+await step("a spotlight saves without a quote (the template has none)", async () => {
+  await db.query(
+    `INSERT INTO spotlights
+       (name, grad_year, spotlight_label, title, involvement, bio, linkedin,
+        cta, photo_url, featured_from)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)`,
+    ["Template Person", "MBA, Class of 2015", null, "VP Marketing, ABC Corp",
+     "Organizer, SF Chapter Fall Mixer", "Bio in the third person.",
+     "https://www.linkedin.com/in/x", "Connect with me on LinkedIn.", null, "2026-09-01"]
+  );
+  const r = await db.query(`SELECT involvement, cta, quote FROM spotlights WHERE name = 'Template Person'`);
+  if (r.rows[0].involvement !== "Organizer, SF Chapter Fall Mixer") throw new Error("involvement lost");
+  if (r.rows[0].cta !== "Connect with me on LinkedIn.") throw new Error("cta lost");
+  if (r.rows[0].quote !== null) throw new Error("quote should be null");
+  await db.query(`DELETE FROM spotlights WHERE name = 'Template Person'`);
+});
+
+console.log("\nevent photos");
+await step("photos group under their event, newest event first", async () => {
+  const older = (await db.query(
+    `INSERT INTO events (title, slug, starts_at, location, format, blurb)
+     VALUES ('Older','older-ev','2024-01-01T00:00:00Z','X','In person','b') RETURNING id`)).rows[0].id;
+  const newer = (await db.query(
+    `INSERT INTO events (title, slug, starts_at, location, format, blurb)
+     VALUES ('Newer','newer-ev','2025-01-01T00:00:00Z','X','In person','b') RETURNING id`)).rows[0].id;
+  for (const [ev, n] of [[older, 2], [newer, 3]]) {
+    for (let i = 0; i < n; i++) {
+      await db.query(`INSERT INTO event_photos (event_id, url) VALUES ($1, $2)`, [ev, `/api/images/${ev}-${i}`]);
+    }
+  }
+  const r = await db.query(
+    `SELECT e.*, p.id AS photo_id, p.url AS photo_url
+     FROM events e JOIN event_photos p ON p.event_id = e.id
+     ORDER BY e.starts_at DESC, p.created_at ASC`
+  );
+  if (r.rows.length !== 5) throw new Error(`expected 5 photo rows, got ${r.rows.length}`);
+  if (r.rows[0].title !== "Newer") throw new Error("newest event should come first");
+});
+await step("deleting an event removes its photos and their stored bytes", async () => {
+  const ev = (await db.query(`SELECT id FROM events WHERE slug = 'older-ev'`)).rows[0].id;
+  const img = (await db.query(
+    `INSERT INTO images (mime, width, height, bytes) VALUES ('image/jpeg',1,1,'\\x00') RETURNING id`)).rows[0].id;
+  await db.query(`INSERT INTO event_photos (event_id, url) VALUES ($1, $2)`, [ev, `/api/images/${img}`]);
+  for (const slug of ["older-ev", "newer-ev"]) {
+    const id = (await db.query(`SELECT id FROM events WHERE slug = $1`, [slug])).rows[0].id;
+    await db.query(
+      `DELETE FROM images WHERE id::text IN (
+         SELECT substring(url from '^/api/images/([0-9a-f-]{36})$')
+         FROM event_photos WHERE event_id = $1)`, [id]);
+    await db.query(`DELETE FROM events WHERE id = $1`, [id]);
+  }
+  const stranded = await db.query(`SELECT count(*)::int n FROM images WHERE id = $1`, [img]);
+  if (stranded.rows[0].n !== 0) throw new Error("image bytes were left behind");
+  const left = await db.query(`SELECT count(*)::int n FROM event_photos`);
+  if (left.rows[0].n !== 0) throw new Error(`${left.rows[0].n} orphaned photos left behind`);
+});
+await step("a photo cannot point at an event that does not exist", async () => {
+  try {
+    await db.query(`INSERT INTO event_photos (event_id, url)
+                    VALUES ('00000000-0000-0000-0000-000000000000', '/x')`);
+  } catch { return; }
+  throw new Error("an orphan photo was accepted");
+});
+
 console.log("\nmembers");
 let memberId;
 await step("record a signup", async () => {
@@ -348,6 +413,17 @@ await step("name and email are required", async () => {
     return;
   }
   throw new Error("a member without an email was allowed");
+});
+await step("first and last name are stored separately", async () => {
+  await db.query(`DELETE FROM members`);
+  await db.query(
+    `INSERT INTO members (name, first_name, last_name, email) VALUES ($1,$2,$3,$4)`,
+    ["Ana María López", "Ana María", "López", "ana@example.com"]
+  );
+  const r = await db.query(`SELECT first_name, last_name FROM members`);
+  if (r.rows[0].first_name !== "Ana María" || r.rows[0].last_name !== "López") {
+    throw new Error("names not stored as given");
+  }
 });
 await step("deleteMember", async () => {
   await db.query(`DELETE FROM members`);

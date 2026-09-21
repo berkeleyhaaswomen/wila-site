@@ -9,7 +9,7 @@ import Reveal from "@/components/Reveal";
 import JoinForm from "./JoinForm";
 
 export const metadata: Metadata = {
-  title: "Become a member · WILA",
+  title: "Join Our Community · WILA",
   description:
     "Join the Berkeley Haas Women in Leadership Alumnae network for event invitations, mentorship, and community news."
 };
@@ -33,12 +33,12 @@ export default function JoinPage() {
           <Reveal className="block md:col-span-5">
             <span className="inline-flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.3em] text-california-gold">
               <span className="h-px w-8 bg-california-gold/70" />
-              Become a member
+              Join Our Community
             </span>
             <h1 className="display mt-6 text-[clamp(2rem,5.5vw,4.25rem)] text-white">
-              Join the
+              Join our
               <br />
-              network
+              community
             </h1>
             <p className="mt-6 max-w-sm text-[15px] leading-relaxed text-white/70 md:text-lg">
               Membership is free and open to every Berkeley Haas alumna. You

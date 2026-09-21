@@ -11,8 +11,8 @@ import {
   FormError,
   Card
 } from "@/components/admin/Field";
-import { EVENT_FORMATS, type EventItem } from "@/lib/types";
-import { isoToPacificInput } from "@/lib/format";
+import { EVENT_FORMATS, EVENT_TIME_ZONES, type EventItem } from "@/lib/types";
+import { isoToZonedInput, zoneOf } from "@/lib/format";
 
 function SaveButton() {
   const { pending } = useFormStatus();
@@ -29,6 +29,7 @@ function SaveButton() {
 
 export default function EventForm({ event }: { event?: EventItem }) {
   const [state, formAction] = useFormState(saveEvent, {});
+  const zone = event ? zoneOf(event) : "America/Los_Angeles";
 
   return (
     <>
@@ -72,18 +73,35 @@ export default function EventForm({ event }: { event?: EventItem }) {
             <TextField
               name="startsAt"
               label="Starts at"
-              hint="Pacific time"
+              hint="in the event's time zone"
               type="datetime-local"
               required
-              defaultValue={isoToPacificInput(event?.startsAt)}
+              defaultValue={isoToZonedInput(event?.startsAt, zone)}
             />
             <TextField
               name="endsAt"
               label="Ends at"
-              hint="optional, Pacific"
+              hint="optional"
               type="datetime-local"
-              defaultValue={isoToPacificInput(event?.endsAt)}
+              defaultValue={isoToZonedInput(event?.endsAt, zone)}
             />
+            <label className="block">
+              <span className="text-sm font-semibold text-ink">Time zone</span>
+              <span className="ml-2 text-xs text-ink/50">
+                only change it for events outside California
+              </span>
+              <select
+                name="timeZone"
+                defaultValue={zone}
+                className="mt-1.5 w-full rounded-md border border-black/15 bg-white px-3 py-2 text-sm text-ink outline-none transition focus:border-berkeley-blue focus:ring-2 focus:ring-berkeley-blue/20"
+              >
+                {EVENT_TIME_ZONES.map((z) => (
+                  <option key={z.id} value={z.id}>
+                    {z.label}
+                  </option>
+                ))}
+              </select>
+            </label>
             <TextField
               name="location"
               label="Location"

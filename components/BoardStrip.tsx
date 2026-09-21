@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import Reveal from "@/components/Reveal";
-import { BOARD } from "@/lib/site";
+import { BOARD, initials } from "@/lib/site";
 
 /**
  * A compact row of the board on the home page, linking through to the full
@@ -34,14 +34,9 @@ export default function BoardStrip() {
 
         <Reveal delay={120} className="mt-12 block">
           <div className="flex flex-wrap items-center gap-y-6">
-            {BOARD.map((m, i) => (
-              <div
-                key={m.name}
-                title={`${m.name}, ${m.role}`}
-                style={{ zIndex: BOARD.length - i }}
-                className="group relative -mr-4 h-20 w-20 shrink-0 overflow-hidden rounded-full border-[3px] border-white bg-soft-gray transition-all duration-500 hover:z-50 hover:-translate-y-1.5 md:h-28 md:w-28"
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
+            {BOARD.map((m, i) => {
+              const face = m.photo ? (
+                // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={m.photo}
                   alt={m.name}
@@ -49,8 +44,38 @@ export default function BoardStrip() {
                   decoding="async"
                   className="h-full w-full object-cover grayscale transition duration-700 group-hover:grayscale-0"
                 />
-              </div>
-            ))}
+              ) : (
+                <span className="grid h-full w-full place-items-center bg-gradient-to-br from-berkeley-blue to-ink font-display text-lg text-california-gold md:text-2xl">
+                  {initials(m.name)}
+                </span>
+              );
+              const cls =
+                "group relative -mr-4 block h-20 w-20 shrink-0 overflow-hidden rounded-full border-[3px] border-white bg-soft-gray transition-all duration-500 hover:z-50 hover:-translate-y-1.5 md:h-28 md:w-28";
+              // Each face opens that person's LinkedIn, like the board page.
+              return m.linkedin ? (
+                <a
+                  key={m.name}
+                  href={m.linkedin}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  title={`${m.name}, ${m.role}`}
+                  aria-label={`${m.name}, ${m.role}, on LinkedIn`}
+                  style={{ zIndex: BOARD.length - i }}
+                  className={cls}
+                >
+                  {face}
+                </a>
+              ) : (
+                <div
+                  key={m.name}
+                  title={`${m.name}, ${m.role}`}
+                  style={{ zIndex: BOARD.length - i }}
+                  className={cls}
+                >
+                  {face}
+                </div>
+              );
+            })}
           </div>
         </Reveal>
       </div>

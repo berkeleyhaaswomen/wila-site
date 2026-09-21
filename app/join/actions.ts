@@ -10,7 +10,8 @@ import { HAAS_PROGRAMS } from "@/lib/types";
 export type JoinState = { error?: string; ok?: boolean };
 
 const schema = z.object({
-  name: z.string().trim().min(2, "Please enter your full name.").max(120),
+  firstName: z.string().trim().min(1, "Please enter your first name.").max(80),
+  lastName: z.string().trim().min(1, "Please enter your last name.").max(80),
   email: z
     .string()
     .trim()
@@ -29,22 +30,25 @@ const schema = z.object({
     .string()
     .trim()
     .refine((v) => (HAAS_PROGRAMS as readonly string[]).includes(v), "Pick your program."),
+  // Optional now: the attendee sheet this form mirrors has no LinkedIn column.
+  // When given it must be a real profile link, since it is what the board
+  // uses to confirm Haas affiliation.
   linkedin: z
     .string()
     .trim()
     .max(300)
     .refine(
-      (v) => /^https?:\/\/([a-z0-9-]+\.)?linkedin\.com\/.+/i.test(v),
+      (v) => !v || /^https?:\/\/([a-z0-9-]+\.)?linkedin\.com\/.+/i.test(v),
       "Paste the full link to your LinkedIn profile, starting with https://"
     )
+    .optional()
 });
 
 /**
  * Handles a membership request from the public form.
  *
- * The LinkedIn profile is the proof of affiliation: the board checks it before
- * adding anyone to the mailing list, which is why the field is required and
- * validated as a real LinkedIn URL rather than any link.
+ * Fields follow the WILA attendee tracking sheet, so exports line up with it.
+ * LinkedIn is optional but, when given, is what the board uses to verify.
  */
 export async function joinWila(
   _prev: JoinState | undefined,
@@ -64,7 +68,8 @@ export async function joinWila(
   }
 
   const parsed = schema.safeParse({
-    name: String(formData.get("name") ?? ""),
+    firstName: String(formData.get("firstName") ?? ""),
+    lastName: String(formData.get("lastName") ?? ""),
     email: String(formData.get("email") ?? ""),
     gradYear: String(formData.get("gradYear") ?? ""),
     program: String(formData.get("program") ?? ""),

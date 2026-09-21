@@ -93,11 +93,11 @@ function EmptyState() {
       </div>
       <h3 className="font-serif text-xl text-ink">No upcoming events yet.</h3>
       <p className="max-w-md text-sm text-ink/70">
-        We're finalizing our next round of programming. Join the WILA email list
-        below to be the first to hear when new events open.
+        We're finalizing our next round of programming. Join our community to
+        be the first to hear when new events open.
       </p>
-      <a href="#contact" className="btn-primary mt-2">
-        Get on the list
+      <a href="/join" className="btn-primary mt-2">
+        Join Our Community
       </a>
     </div>
   );
@@ -105,10 +105,13 @@ function EmptyState() {
 
 export default function EventsUI({
   upcoming,
-  past
+  past,
+  pastTotal = past.length
 }: {
   upcoming: EventItem[];
   past: EventItem[];
+  /** How many past events exist in all, when only the latest few are passed. */
+  pastTotal?: number;
 }) {
   const [tab, setTab] = useState<"upcoming" | "past">(
     upcoming.length ? "upcoming" : "past"
@@ -144,7 +147,7 @@ export default function EventsUI({
               : "text-ink/70 hover:text-berkeley-blue"
           }`}
         >
-          Past ({past.length})
+          Past ({pastTotal})
         </button>
       </div>
 
@@ -161,6 +164,20 @@ export default function EventsUI({
           ))
         )}
       </div>
+
+      <a
+        href="/events"
+        className="group mt-10 inline-flex items-center gap-2 text-sm font-semibold text-berkeley-blue"
+      >
+        <span className="border-b border-berkeley-blue/30 pb-0.5 transition group-hover:border-berkeley-blue">
+          {tab === "past" && pastTotal > past.length
+            ? `See all ${pastTotal} past events`
+            : "See every event"}
+        </span>
+        <span aria-hidden="true" className="transition-transform group-hover:translate-x-1">
+          &rarr;
+        </span>
+      </a>
     </div>
   );
 }

@@ -2,11 +2,11 @@ import Reveal from "@/components/Reveal";
 import Counter from "@/components/Counter";
 import Parallax from "@/components/Parallax";
 import PhotoRiver from "@/components/PhotoRiver";
-import { SITE, FEATURE_PHOTOS, GALLERY } from "@/lib/site";
+import { SITE, FEATURE_PHOTOS, GALLERY, BOARD } from "@/lib/site";
 
 const STATS = [
   { to: SITE.founded, label: "Founded" },
-  { to: 9, label: "Board members" },
+  { to: BOARD.length, label: "Board members" },
   { to: 4, label: "Leadership pillars" }
 ];
 

@@ -46,7 +46,7 @@ export default function CTA() {
             href="/join"
             className="group inline-flex items-center gap-3 rounded-full bg-california-gold px-8 py-4 text-sm font-semibold uppercase tracking-[0.12em] text-ink transition hover:bg-white"
           >
-            Become a member
+            Join Our Community
             <span aria-hidden="true" className="transition-transform group-hover:translate-x-1">
               &rarr;
             </span>

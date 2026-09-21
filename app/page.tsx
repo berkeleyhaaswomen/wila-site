@@ -1,12 +1,12 @@
 import Nav from "@/components/Nav";
 import LogoWatermark from "@/components/LogoWatermark";
 import ScrollProgress from "@/components/ScrollProgress";
-import Mentorship from "@/components/Mentorship";
-import ScrollHero from "@/components/ScrollHero";
+import Hero from "@/components/Hero";
 import About from "@/components/About";
-import PinnedPillars from "@/components/PinnedPillars";
-import Events from "@/components/Events";
 import Spotlight from "@/components/Spotlight";
+import Pillars from "@/components/Pillars";
+import Events from "@/components/Events";
+import Mentorship from "@/components/Mentorship";
 import BoardStrip from "@/components/BoardStrip";
 import CTA from "@/components/CTA";
 import Footer from "@/components/Footer";
@@ -24,12 +24,12 @@ export default function HomePage() {
       <ScrollProgress />
       <LogoWatermark />
       <Nav />
-      <ScrollHero />
+      <Hero />
       <About />
-      <PinnedPillars />
+      <Spotlight />
+      <Pillars />
       <Events />
       <Mentorship />
-      <Spotlight />
       <BoardStrip />
       <CTA />
       <Footer />

@@ -19,7 +19,8 @@ export default async function Events() {
             alumnae, for alumnae.
           </p>
         </Reveal>
-        <EventsUI upcoming={upcoming} past={past} />
+        {/* Latest six past events here; the full history lives on /events. */}
+        <EventsUI upcoming={upcoming} past={past.slice(0, 6)} pastTotal={past.length} />
       </div>
     </section>
   );

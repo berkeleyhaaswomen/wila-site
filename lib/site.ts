@@ -9,8 +9,8 @@
 export const SITE = {
   founded: 2021,
   email: "wila@haas.berkeley.edu",
-  instagram: "https://www.instagram.com/",
-  linkedin: "https://www.linkedin.com/",
+  instagram: "https://www.instagram.com/haas_wila/",
+  linkedin: "https://www.linkedin.com/groups/3814431/",
   address: ["Haas School of Business", "2220 Piedmont Ave, Berkeley, CA 94720"],
   mission:
     "Founded in 2021, Berkeley Haas Women in Leadership Alumnae turns the Haas leadership principles into practice by building a community who uplift and amplify each other, at work and beyond.",
@@ -61,66 +61,102 @@ export const PILLARS: Pillar[] = [
 export type BoardPerson = {
   name: string;
   role: string;
-  photo: string;
+  /** Omitted when we do not have a headshot yet; the card shows initials. */
+  photo?: string;
   linkedin?: string;
 };
 
-export const BOARD: BoardPerson[] = [
+export type BoardGroup = { label: string; people: BoardPerson[] };
+
+/**
+ * The board in its three groups, one row each on the board page, so the
+ * structure reads at a glance rather than as nine interchangeable cards.
+ */
+export const BOARD_GROUPS: BoardGroup[] = [
   {
-    name: "Abha Bhagat",
-    role: "Founding Co-President",
-    photo: "/board/abha-bhagat.jpg",
-    linkedin: "https://www.linkedin.com/in/abhabhagat/"
+    label: "Executive board",
+    people: [
+      {
+        name: "Abha Bhagat",
+        role: "Founding Co-President",
+        photo: "/board/abha-bhagat.jpg",
+        linkedin: "https://www.linkedin.com/in/abhabhagat/"
+      },
+      {
+        name: "Deepti Patibandla",
+        role: "Co-President",
+        photo: "/board/deepti-patibandla.jpg",
+        linkedin: "https://www.linkedin.com/in/deeptipatibandla/"
+      },
+      {
+        name: "Amy Chou",
+        role: "VP Marketing",
+        photo: "/board/amy-chou.jpg",
+        linkedin: "https://www.linkedin.com/in/amychou"
+      },
+      {
+        name: "Neha Dubey",
+        role: "Treasurer",
+        photo: "/board/neha-dubey.jpg",
+        linkedin: "https://www.linkedin.com/in/neha-dubey99/"
+      }
+    ]
   },
   {
-    name: "Deepti Patibandla",
-    role: "Co-President",
-    photo: "/board/deepti-patibandla.jpg",
-    linkedin: "https://www.linkedin.com/in/deeptipatibandla/"
+    label: "Board members",
+    people: [
+      {
+        name: "Berna Geylani",
+        role: "Board Member",
+        photo: "/board/berna-geylani.jpg",
+        linkedin: "https://www.linkedin.com/in/demandgenerationleader/"
+      },
+      {
+        name: "Katie Li",
+        role: "Board Member",
+        photo: "/board/katie-li.jpg",
+        linkedin: "https://www.linkedin.com/in/katienli"
+      },
+      {
+        name: "Michelle Ma",
+        role: "Board Member",
+        photo: "/board/michelle-ma.jpg",
+        linkedin: "https://www.linkedin.com/in/xmichellema/"
+      },
+      // Last name, headshot and LinkedIn still to come.
+      { name: "Sheila", role: "Board Member" }
+    ]
   },
   {
-    name: "Amy Chou",
-    role: "VP Marketing",
-    photo: "/board/amy-chou.jpg",
-    linkedin: "https://www.linkedin.com/in/amychou"
-  },
-  {
-    name: "Neha Dubey",
-    role: "Treasurer",
-    photo: "/board/neha-dubey.jpg",
-    linkedin: "https://www.linkedin.com/in/neha-dubey99/"
-  },
-  {
-    name: "Berna Geylani",
-    role: "Board Member",
-    photo: "/board/berna-geylani.jpg",
-    linkedin: "https://www.linkedin.com/in/demandgenerationleader/"
-  },
-  {
-    name: "Katie Li",
-    role: "Board Member",
-    photo: "/board/katie-li.jpg",
-    linkedin: "https://www.linkedin.com/in/katienli"
-  },
-  {
-    name: "Michelle Ma",
-    role: "Board Member",
-    photo: "/board/michelle-ma.jpg",
-    linkedin: "https://www.linkedin.com/in/xmichellema/"
-  },
-  {
-    name: "Tricia Tran",
-    role: "Founding Advisor",
-    photo: "/board/tricia-tran.jpg",
-    linkedin: "https://www.linkedin.com/in/triciatranbayarea/"
-  },
-  {
-    name: "Dimple Malkani",
-    role: "Founding Advisor",
-    photo: "/board/dimple-malkani.jpg",
-    linkedin: "https://www.linkedin.com/in/dimplemalkani"
+    label: "Founders and advisors",
+    people: [
+      {
+        name: "Tricia Tran",
+        role: "Founder, Ex Co-President",
+        photo: "/board/tricia-tran.jpg",
+        linkedin: "https://www.linkedin.com/in/triciatranbayarea/"
+      },
+      {
+        name: "Dimple Malkani",
+        role: "Founding Advisor",
+        photo: "/board/dimple-malkani.jpg",
+        linkedin: "https://www.linkedin.com/in/dimplemalkani"
+      }
+    ]
   }
 ];
+
+/** Everyone, flattened, in board-page order. */
+export const BOARD: BoardPerson[] = BOARD_GROUPS.flatMap((g) => g.people);
+
+export function initials(name: string): string {
+  return name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w[0]?.toUpperCase() ?? "")
+    .join("");
+}
 
 /** Every gallery frame, widest and most usable first. */
 export const GALLERY: string[] = Array.from(

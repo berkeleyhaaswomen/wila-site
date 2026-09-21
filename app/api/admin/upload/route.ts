@@ -6,7 +6,9 @@ import { storeImage, blobConfigured } from "@/lib/images";
 
 export const runtime = "nodejs";
 
-const MAX_BYTES = 12 * 1024 * 1024; // before resizing; phone photos are large
+// Vercel refuses bodies over 4.5 MB before this runs; the browser shrinks
+// photos first (lib/clientImage.ts), so this is a backstop, not the limit.
+const MAX_BYTES = 4.5 * 1024 * 1024;
 const ALLOWED = new Set([
   "image/jpeg",
   "image/png",
@@ -51,7 +53,7 @@ export async function POST(request: Request) {
   }
   if (file.size > MAX_BYTES) {
     return NextResponse.json(
-      { error: "That image is over 12 MB. Please pick a smaller one." },
+      { error: "That image is too large. Please pick a smaller one." },
       { status: 413 }
     );
   }

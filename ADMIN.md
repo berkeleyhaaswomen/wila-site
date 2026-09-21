@@ -176,6 +176,7 @@ Sign in at **`/admin`**.
 | Blurb | The paragraph on the card |
 | Starts at | The date line, and whether it counts as Upcoming or Past |
 | Ends at | Optional, joins the date line |
+| Time zone | The zone the times are entered and shown in. Pacific unless the event is elsewhere, e.g. London |
 | Location | The pin row |
 | Format | The **In person / Virtual / Hybrid** badge |
 | Price | The dollar row, write "Free" or "$75" |
@@ -183,24 +184,57 @@ Sign in at **`/admin`**.
 
 Events move between **Upcoming** and **Past** automatically based on the start
 time, you never move them by hand. The bottom link is labelled "RSVP" for
-upcoming events and "View recap" for past ones.
+upcoming events and "View recap" for past ones. A start time of exactly
+midnight is treated as all day and shows the date only.
+
+The homepage shows upcoming events and the six most recent past ones. Every
+event, grouped by year, is on **/events**.
+
+### Add photos from an event
+
+Open the event in **Events**, then **Add photos** at the top of the page. Pick
+as many as you like at once, straight from a phone is fine: each one is
+resized in the browser before upload. Hover a thumbnail and click × to remove
+it.
+
+Photos appear on **/photos** grouped under the event, most recent event
+first, with a link back to the event on /events. The 34 photos from the old
+site stay underneath in "From the archive". Deleting an event deletes its
+photos too.
+
+### Import events from the old site
+
+`scripts/import-events.mjs` copies the event history from
+wila.haasalumni.org into the database. It never overwrites an event whose slug
+already exists, so edits made in /admin are safe.
+
+```bash
+npm run events:import                    # local, dry run
+npm run events:import -- --prod --write  # production, for real
+```
+
+It lists any event whose source has no location; fill those in from /admin.
 
 ### Rotate the alumnae spotlight
 
 **Spotlights → New spotlight**.
 
-| Field | Where it shows |
-|---|---|
-| Alumna name + Class year | The small-caps byline |
-| Spotlight label | The badge over the photo, e.g. "Q2 2026 Spotlight" |
-| Current title | The large serif headline |
-| Quote | The gold-rule pull quote |
-| Short bio | The paragraph under the quote |
-| Photo | The portrait, upload a file or paste a URL |
-| LinkedIn URL | The "View LinkedIn profile" button |
-| 'Nominate an alumna' link | That button. Defaults to `#contact` |
-| Pillar / Chapter / Mentor cohort | The three-column strip at the bottom |
-| Featured from | Which spotlight wins the homepage |
+The form follows the board's spotlight template, one numbered step per
+question, so you can copy answers straight from a nominee's reply.
+
+| Step | Field | Where it shows |
+|---|---|---|
+| 1 | Full name | The headline |
+| 2 | Photo | The portrait. Square, at least 500 × 500 |
+| 3 | Year graduated and program | The byline, e.g. "MBA, Class of 2015" |
+| 4 | Current title and company | Beside the gold rule |
+| 5 | WILA involvement | One line under the title, e.g. "Organizer, SF Chapter Fall Mixer" |
+| 6 | Bio | 3 to 5 sentences in the third person |
+| 7 | LinkedIn / call to action | The "Connect with…" button, and an optional line above it |
+| | Spotlight label | The badge over the photo, e.g. "Q2 2026 Spotlight" |
+| | Featured from | Which spotlight wins the homepage |
+
+"Nominate an alumna" opens an email to wila@haas.berkeley.edu.
 
 The homepage shows the spotlight with the **most recent "Featured from"**
 date. Older ones stay in the list for reference, the one currently live is
@@ -211,9 +245,11 @@ empty row, so a half-filled spotlight still looks intentional.
 
 ### Members and mailing lists
 
-People join through the public form at **/join**, which asks for name, email,
-graduation year, program, and a LinkedIn profile. The LinkedIn link is the
-proof of affiliation: check it before adding anyone to a mailing list.
+People join through the public form at **/join** ("Join Our Community"),
+which asks for first and last name, email, degree program, grad year, and an
+optional LinkedIn profile. Where someone gives a LinkedIn link, it is the
+quickest proof of affiliation: check it before adding anyone to a mailing
+list.
 
 **Members** in the admin nav lists everyone who has signed up, newest first,
 with a Verify link straight to each profile. The page is **super admin only**,
@@ -222,7 +258,11 @@ the board.
 
 To send an email:
 
-1. Tick the columns you want under **Export**
+1. Under **Export**, tick the columns you want, or choose **WILA attendee
+   sheet** to get the nine columns of the board's attendee spreadsheet in its
+   order (Event Date through Attendee Status; the event columns are left
+   blank to fill in per event). Untick "Include the header row" when pasting
+   under an existing header
 2. **Copy every email** puts a comma-separated list on your clipboard, ready
    for the BCC field. Use BCC rather than To, so members cannot see each
    other's addresses

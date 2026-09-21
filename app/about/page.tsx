@@ -5,7 +5,7 @@ import LogoWatermark from "@/components/LogoWatermark";
 import ScrollProgress from "@/components/ScrollProgress";
 import Footer from "@/components/Footer";
 import About from "@/components/About";
-import PinnedPillars from "@/components/PinnedPillars";
+import Pillars from "@/components/Pillars";
 import CTA from "@/components/CTA";
 import PageHeader from "@/components/PageHeader";
 
@@ -28,7 +28,7 @@ export default function AboutPage() {
         photo="/photos/wila-07.jpg"
       />
       <About />
-      <PinnedPillars />
+      <Pillars />
       <CTA />
       <Footer />
     </main>
