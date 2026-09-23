@@ -83,6 +83,12 @@ The homepage always shows whichever spotlight has the most recent "Featured
 from" date. The one currently live is tagged **On the homepage** in the list.
 Older ones stay for reference.
 
+**Check who has been nominated**
+Nominations lists the alumnae people have put forward through the form on the
+homepage, most supported first. If three people nominate the same person, she
+appears once with a 3 beside her, not three times. Click **Mark reviewed**
+once you have looked at someone.
+
 **Look up who has joined** (super admins only)
 Members lists everyone who signed up at /join. Check the Verify link against
 their LinkedIn profile before adding them to a mailing list, then use Export

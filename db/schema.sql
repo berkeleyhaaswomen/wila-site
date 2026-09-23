@@ -164,6 +164,31 @@ CREATE INDEX IF NOT EXISTS members_created_at_idx ON members (created_at DESC);
 ALTER TABLE members ADD COLUMN IF NOT EXISTS first_name text;
 ALTER TABLE members ADD COLUMN IF NOT EXISTS last_name text;
 
+-- ---------------------------------------------------------- nominations ----
+-- Alumnae nominated for the spotlight through the public form.
+--
+-- One row per nominee, not per nomination. A second person nominating the
+-- same alumna raises her count rather than adding a duplicate row, so the
+-- board sees "nominated 3 times" instead of the same name three times.
+CREATE TABLE IF NOT EXISTS nominations (
+  id         uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  name       text NOT NULL,
+  email      text NOT NULL,
+  -- How many nominations this alumna has received.
+  votes      integer NOT NULL DEFAULT 1 CHECK (votes > 0),
+  -- 'new' until the board has looked at her, then 'reviewed'.
+  status     text NOT NULL DEFAULT 'new' CHECK (status IN ('new', 'reviewed')),
+  -- created_at is the first nomination, updated_at the most recent one.
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now()
+);
+
+-- The email is the identity: same address, same person, same row.
+CREATE UNIQUE INDEX IF NOT EXISTS nominations_email_lower_idx
+  ON nominations (lower(email));
+
+CREATE INDEX IF NOT EXISTS nominations_status_idx ON nominations (status, votes DESC);
+
 -- ------------------------------------------------------------ updated_at ---
 CREATE OR REPLACE FUNCTION set_updated_at() RETURNS trigger AS $$
 BEGIN
@@ -175,7 +200,7 @@ $$ LANGUAGE plpgsql;
 DO $$
 DECLARE t text;
 BEGIN
-  FOREACH t IN ARRAY ARRAY['users', 'events', 'spotlights', 'members'] LOOP
+  FOREACH t IN ARRAY ARRAY['users', 'events', 'spotlights', 'members', 'nominations'] LOOP
     EXECUTE format(
       'DROP TRIGGER IF EXISTS %I ON %I', t || '_set_updated_at', t
     );

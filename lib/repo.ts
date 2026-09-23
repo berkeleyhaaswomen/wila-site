@@ -534,3 +534,88 @@ export async function listEventsWithPhotos(): Promise<EventWithPhotos[]> {
   }
   return groups;
 }
+
+// ---- spotlight nominations ---------------------------------------------
+
+export type NominationRow = {
+  id: string;
+  name: string;
+  email: string;
+  /** How many people have nominated her. */
+  votes: number;
+  status: "new" | "reviewed";
+  /** First nomination. */
+  createdAt: string;
+  /** Most recent nomination. */
+  updatedAt: string;
+};
+
+function toNomination(r: any): NominationRow {
+  const iso = (v: any) => (v instanceof Date ? v.toISOString() : v);
+  return {
+    id: r.id,
+    name: r.name,
+    email: r.email,
+    votes: Number(r.votes),
+    status: r.status,
+    createdAt: iso(r.created_at),
+    updatedAt: iso(r.updated_at)
+  };
+}
+
+/**
+ * Records a nomination.
+ *
+ * The nominee's email is her identity. A second nomination for the same
+ * address raises the count on the row that is already there, so the board
+ * sees one entry per alumna with the weight of support behind her. Her name
+ * is refreshed from the newer nomination, since a later speller may have it
+ * more nearly right. A nomination that arrives after the board has marked her
+ * reviewed puts her back in the new pile, because fresh support is worth a
+ * second look.
+ */
+export async function addNomination(input: {
+  name: string;
+  email: string;
+}): Promise<NominationRow> {
+  const row = await queryOne(
+    `INSERT INTO nominations (name, email)
+     VALUES ($1, $2)
+     ON CONFLICT (lower(email)) DO UPDATE
+       SET votes = nominations.votes + 1,
+           name = EXCLUDED.name,
+           status = 'new'
+     RETURNING id, name, email, votes, status, created_at, updated_at`,
+    [input.name, input.email]
+  );
+  return toNomination(row);
+}
+
+/** Most supported first, and within that the most recently nominated. */
+export async function listNominations(): Promise<NominationRow[]> {
+  const rows = await query(
+    `SELECT id, name, email, votes, status, created_at, updated_at
+     FROM nominations
+     ORDER BY status = 'reviewed', votes DESC, updated_at DESC`
+  );
+  return rows.map(toNomination);
+}
+
+export async function setNominationStatus(
+  id: string,
+  status: "new" | "reviewed"
+): Promise<void> {
+  await query(`UPDATE nominations SET status = $2 WHERE id = $1`, [id, status]);
+}
+
+export async function deleteNomination(id: string): Promise<void> {
+  await query(`DELETE FROM nominations WHERE id = $1`, [id]);
+}
+
+/** Nominees the board has not looked at yet, for the dashboard. */
+export async function countNewNominations(): Promise<number> {
+  const row = await queryOne<{ n: string }>(
+    `SELECT count(*)::text AS n FROM nominations WHERE status = 'new'`
+  );
+  return Number(row?.n ?? 0);
+}

@@ -14,7 +14,7 @@ alumnae spotlight. No code required.
 | Role | What they can do |
 |---|---|
 | **Super admin** | Everything. Adds and removes the people who manage the website, changes their roles, resets their passwords, edits all content. |
-| **Admin** | Every content page, events and spotlights: create, edit, delete. **Cannot** add or remove users or change roles. |
+| **Admin** | Every content page, events, spotlights and nominations: create, edit, delete. **Cannot** add or remove users or change roles, and cannot see the member list. |
 
 The Users page is hidden from the nav for Admins, and the server rejects the
 request even if they navigate to `/admin/users` directly, the check is on the
@@ -234,14 +234,38 @@ question, so you can copy answers straight from a nominee's reply.
 | | Spotlight label | The badge over the photo, e.g. "Q2 2026 Spotlight" |
 | | Featured from | Which spotlight wins the homepage |
 
-"Nominate an alumna" opens an email to wila@haas.berkeley.edu.
-
 The homepage shows the spotlight with the **most recent "Featured from"**
 date. Older ones stay in the list for reference, the one currently live is
 tagged "On the homepage".
 
 Any field you leave blank is omitted from the card rather than rendering an
 empty row, so a half-filled spotlight still looks intentional.
+
+### Review spotlight nominations
+
+"Nominate an alumna" on the homepage opens the public form at **/nominate**,
+which asks only for the nominee's full name and email. Anyone can nominate
+anyone from Haas, including themselves.
+
+**Nominations** in the admin nav lists them, most supported first.
+
+- **One row per nominee.** When several people nominate the same alumna her
+  count goes up, rather than the list showing her three times. The email is
+  the identity, so Jane@ and jane@ are the same person
+- **Nominations** is that count. A gold badge means more than one person put
+  her forward
+- **Latest** is the most recent nomination, with the first one underneath
+- **Mark reviewed** moves her to the lower list once you have looked at her.
+  A fresh nomination afterwards moves her back up automatically, because new
+  support is worth a second look
+- **Delete** removes an entry, for spam or a mistake
+
+The dashboard's **To review** tile counts the nominees nobody has looked at
+yet. Nothing is emailed to the nominee: the board reaches out themselves.
+
+Every admin can see this page, since it is part of running the spotlight. It
+does hold names and emails from outside the board, so if you would rather it
+were limited to super admins, that is a one-line change.
 
 ### Members and mailing lists
 

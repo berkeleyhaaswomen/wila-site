@@ -429,6 +429,95 @@ await step("deleteMember", async () => {
   await db.query(`DELETE FROM members`);
 });
 
+console.log("\nnominations");
+const nominate = (name, email) =>
+  db.query(
+    `INSERT INTO nominations (name, email)
+     VALUES ($1, $2)
+     ON CONFLICT (lower(email)) DO UPDATE
+       SET votes = nominations.votes + 1,
+           name = EXCLUDED.name,
+           status = 'new'`,
+    [name, email]
+  );
+
+await step("a nomination starts at one vote and needs review", async () => {
+  await nominate("Priya Raman", "priya@example.com");
+  const r = await db.query(`SELECT votes, status FROM nominations`);
+  if (r.rows.length !== 1) throw new Error(`expected 1 row, got ${r.rows.length}`);
+  if (r.rows[0].votes !== 1) throw new Error("first nomination is not 1 vote");
+  if (r.rows[0].status !== "new") throw new Error("a new nomination is not 'new'");
+});
+
+await step("a second nomination raises the count, not the row count", async () => {
+  await nominate("Priya Raman", "PRIYA@example.com");
+  const r = await db.query(`SELECT votes FROM nominations`);
+  if (r.rows.length !== 1) throw new Error(`duplicate row created (${r.rows.length} rows)`);
+  if (r.rows[0].votes !== 2) throw new Error(`expected 2 votes, got ${r.rows[0].votes}`);
+});
+
+await step("a different nominee is its own row", async () => {
+  await nominate("Wei Chen", "wei@example.com");
+  const r = await db.query(`SELECT count(*)::int AS n FROM nominations`);
+  if (r.rows[0].n !== 2) throw new Error(`expected 2 nominees, got ${r.rows[0].n}`);
+});
+
+await step("a fresh nomination reopens a reviewed nominee", async () => {
+  await db.query(`UPDATE nominations SET status = 'reviewed' WHERE email = $1`, [
+    "wei@example.com"
+  ]);
+  await nominate("Wei Chen", "wei@example.com");
+  const r = await db.query(`SELECT votes, status FROM nominations WHERE email = $1`, [
+    "wei@example.com"
+  ]);
+  if (r.rows[0].status !== "new") throw new Error("reviewed nominee was not reopened");
+  if (r.rows[0].votes !== 2) throw new Error("vote was not counted on reopen");
+});
+
+await step("the newer spelling of a name wins", async () => {
+  await nominate("Priya Raman-Iyer", "priya@example.com");
+  const r = await db.query(`SELECT name FROM nominations WHERE email = $1`, [
+    "priya@example.com"
+  ]);
+  if (r.rows[0].name !== "Priya Raman-Iyer") throw new Error("name was not refreshed");
+});
+
+await step("most supported sorts first, reviewed sink", async () => {
+  await db.query(`UPDATE nominations SET status = 'reviewed' WHERE email = $1`, [
+    "priya@example.com"
+  ]);
+  const r = await db.query(
+    `SELECT email FROM nominations ORDER BY status = 'reviewed', votes DESC, updated_at DESC`
+  );
+  if (r.rows[0].email !== "wei@example.com") {
+    throw new Error(`reviewed nominee did not sink (first was ${r.rows[0].email})`);
+  }
+});
+
+await step("an unknown status is rejected", async () => {
+  try {
+    await db.query(`UPDATE nominations SET status = 'maybe' WHERE email = $1`, [
+      "wei@example.com"
+    ]);
+  } catch {
+    return;
+  }
+  throw new Error("an invalid status was allowed");
+});
+
+await step("a nomination without an email is rejected", async () => {
+  try {
+    await db.query(`INSERT INTO nominations (name) VALUES ('No Email')`);
+  } catch {
+    return;
+  }
+  throw new Error("a nomination without an email was allowed");
+});
+
+await step("deleteNomination", async () => {
+  await db.query(`DELETE FROM nominations`);
+});
+
 console.log("\nimages");
 let imageId;
 await step("insert an image and read the bytes back", async () => {

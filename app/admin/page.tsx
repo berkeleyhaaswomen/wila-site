@@ -2,7 +2,13 @@ import Link from "next/link";
 
 import { requireUser } from "@/lib/auth";
 import { dbConfigured } from "@/lib/db";
-import { listEvents, listSpotlights, listUsers, countMembers } from "@/lib/repo";
+import {
+  listEvents,
+  listSpotlights,
+  listUsers,
+  countMembers,
+  countNewNominations
+} from "@/lib/repo";
 import AdminShell from "@/components/admin/AdminShell";
 import { partitionEvents } from "@/lib/format";
 
@@ -42,18 +48,21 @@ export default async function AdminHome({
   let spotlightCount = 0;
   let userCount = 0;
   let memberCount = 0;
+  let nominationCount = 0;
   let loadError: string | null = null;
 
   if (dbConfigured()) {
     try {
-      const [events, spotlights] = await Promise.all([
+      const [events, spotlights, newNominations] = await Promise.all([
         listEvents(),
-        listSpotlights()
+        listSpotlights(),
+        countNewNominations()
       ]);
       const { upcoming, past } = partitionEvents(events);
       upcomingCount = upcoming.length;
       pastCount = past.length;
       spotlightCount = spotlights.length;
+      nominationCount = newNominations;
       if (user.role === "superadmin") {
         userCount = (await listUsers()).length;
         memberCount = await countMembers();
@@ -87,10 +96,15 @@ export default async function AdminHome({
         </div>
       )}
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-6">
         <Stat label="Upcoming events" value={upcomingCount} href="/admin/events" />
         <Stat label="Past events" value={pastCount} href="/admin/events" />
         <Stat label="Spotlights" value={spotlightCount} href="/admin/spotlights" />
+        <Stat
+          label="To review"
+          value={nominationCount}
+          href="/admin/nominations"
+        />
         {user.role === "superadmin" && (
           <Stat label="Members" value={memberCount} href="/admin/members" />
         )}

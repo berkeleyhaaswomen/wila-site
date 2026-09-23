@@ -12,10 +12,8 @@ import { getSpotlight } from "@/lib/content";
 export default async function Spotlight() {
   const s = await getSpotlight();
 
-  // Nominations go to the board inbox; there is no form for them yet.
-  const nominateHref =
-    "mailto:wila@haas.berkeley.edu?subject=" +
-    encodeURIComponent("WILA spotlight nomination");
+  // Nominations land in /admin for review, one row per nominee.
+  const nominateHref = "/nominate";
 
   return (
     <section id="spotlight" className="relative overflow-hidden bg-cream py-20 md:py-32">
