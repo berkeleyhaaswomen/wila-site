@@ -125,8 +125,12 @@ export const BOARD_GROUPS: BoardGroup[] = [
         photo: "/board/michelle-ma.jpg",
         linkedin: "https://www.linkedin.com/in/xmichellema/"
       },
-      // Last name, headshot and LinkedIn still to come.
-      { name: "Sheila", role: "Board Member" }
+      // Headshot still to come, so this card shows her initials.
+      {
+        name: "Sheila Guastamachio",
+        role: "Board Member",
+        linkedin: "https://www.linkedin.com/in/sheilaguastamachio/"
+      }
     ]
   },
   {
