@@ -84,7 +84,7 @@ export const HAAS_PROGRAMS = [
   "Undergraduate (BS)",
   "PhD",
   "Berkeley MBA for Executives / dual degree",
-  "Other Berkeley program"
+  "Other Berkeley Haas program"
 ] as const;
 
 /** Every exportable member field, and how to label it in a spreadsheet. */

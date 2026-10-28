@@ -4,6 +4,7 @@ import { useFormState, useFormStatus } from "react-dom";
 
 import { joinWila } from "./actions";
 import { HAAS_PROGRAMS } from "@/lib/types";
+import { SITE } from "@/lib/site";
 
 const field =
   "mt-2 w-full rounded-lg border border-white/20 bg-white/5 px-4 py-3 text-[15px] text-white " +
@@ -47,12 +48,29 @@ export default function JoinForm() {
           Thank you for joining. You will hear from us about upcoming events,
           mentorship openings, and the quarterly spotlight.
         </p>
-        <a
-          href="/"
-          className="mt-7 inline-flex items-center gap-2 text-sm font-semibold text-california-gold transition hover:text-white"
-        >
-          Back to the site
-        </a>
+        <p className="mt-5 max-w-md text-[15px] leading-relaxed text-white/75">
+          One more thing worth doing now: our LinkedIn group is where the
+          day-to-day conversation happens.
+        </p>
+        <div className="mt-7 flex flex-wrap items-center gap-6">
+          <a
+            href={SITE.linkedin}
+            target="_blank"
+            rel="noreferrer noopener"
+            className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-berkeley-blue transition hover:bg-california-gold hover:text-ink"
+          >
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M4.98 3.5a2.5 2.5 0 1 1 0 5.001 2.5 2.5 0 0 1 0-5.001zM3 9h4v12H3zM9 9h3.8v1.71h.05c.53-1 1.83-2.06 3.77-2.06 4.03 0 4.78 2.65 4.78 6.1V21H17.6v-5.32c0-1.27-.02-2.9-1.77-2.9-1.77 0-2.04 1.38-2.04 2.8V21H9z" />
+            </svg>
+            Join our LinkedIn group
+          </a>
+          <a
+            href="/"
+            className="text-sm font-semibold text-california-gold transition hover:text-white"
+          >
+            Back to the site
+          </a>
+        </div>
       </div>
     );
   }
@@ -140,7 +158,7 @@ export default function JoinForm() {
       </div>
 
       <label className="block">
-        <Label hint="optional, helps us verify">LinkedIn profile</Label>
+        <Label>LinkedIn profile</Label>
         <input
           className={field}
           name="linkedin"
@@ -155,6 +173,21 @@ export default function JoinForm() {
       </p>
 
       <Submit />
+
+      {/* The group is where members actually talk to each other, so point at
+          it here as well as on the thank-you screen. */}
+      <p className="text-sm leading-relaxed text-white/55">
+        Already signed up? Join the conversation in our{" "}
+        <a
+          href={SITE.linkedin}
+          target="_blank"
+          rel="noreferrer noopener"
+          className="font-semibold text-california-gold underline decoration-california-gold/40 underline-offset-4 transition hover:text-white hover:decoration-white/60"
+        >
+          WILA LinkedIn group
+        </a>
+        .
+      </p>
     </form>
   );
 }

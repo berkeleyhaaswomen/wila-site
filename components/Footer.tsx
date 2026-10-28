@@ -1,3 +1,5 @@
+import { SITE } from "@/lib/site";
+
 export default function Footer() {
   const year = new Date().getFullYear();
   return (
@@ -36,8 +38,14 @@ export default function Footer() {
             Contact
           </div>
           <p className="mt-4 text-sm text-white/70">
-            <a className="hover:text-white" href="mailto:wila@haas.berkeley.edu">
-              wila@haas.berkeley.edu
+            <a className="hover:text-white" href={`mailto:${SITE.email}`}>
+              {SITE.email}
+            </a>
+            <br />
+            {/* The board watches the Gmail account day to day, so list it
+                alongside the Haas address rather than instead of it. */}
+            <a className="hover:text-white" href={`mailto:${SITE.altEmail}`}>
+              {SITE.altEmail}
             </a>
             <br />
             Haas School of Business

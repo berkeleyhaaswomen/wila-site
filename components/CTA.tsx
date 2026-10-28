@@ -6,9 +6,8 @@ import Reveal from "@/components/Reveal";
  * Membership call to action.
  *
  * Deliberately a link rather than an inline email field. The board needs the
- * graduation year, program and LinkedIn profile to confirm someone is a Haas
- * alumna, and asking for an address here would have collected a list nobody
- * could verify.
+ * graduation year and program to know who is joining, and asking for an
+ * address here would have collected a list with none of that behind it.
  */
 export default function CTA() {
   return (
@@ -52,7 +51,7 @@ export default function CTA() {
             </span>
           </Link>
           <p className="mt-4 text-xs text-white/45">
-            Takes about a minute. We verify with your LinkedIn profile.
+            Takes about a minute. Free for every Berkeley Haas alumna.
           </p>
         </Reveal>
       </div>

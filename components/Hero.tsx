@@ -158,6 +158,8 @@ export default function Hero() {
             Women in
             <br />
             Leadership
+            <br />
+            Alumnae
           </h1>
           <p className="mt-5 max-w-xl text-[15px] leading-relaxed text-white/75 md:text-lg">
             A worldwide network of Berkeley Haas alumnae, committed to a

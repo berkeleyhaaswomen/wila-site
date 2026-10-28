@@ -9,11 +9,13 @@
 export const SITE = {
   founded: 2021,
   email: "wila@haas.berkeley.edu",
+  // The board's own inbox, watched day to day alongside the Haas address.
+  altEmail: "berkeleyhaaswomen@gmail.com",
   instagram: "https://www.instagram.com/haas_wila/",
   linkedin: "https://www.linkedin.com/groups/3814431/",
   address: ["Haas School of Business", "2220 Piedmont Ave, Berkeley, CA 94720"],
   mission:
-    "Founded in 2021, Berkeley Haas Women in Leadership Alumnae turns the Haas leadership principles into practice by building a community who uplift and amplify each other, at work and beyond.",
+    "Founded in 2021, Berkeley Haas Women in Leadership Alumnae (WILA) turns the Haas leadership principles into practice by building a community who uplift and amplify each other, at work and beyond.",
   missionLong:
     "Our mission is to create space for alumnae to connect, support, and inspire one another in both professional and personal journeys. Grounded in the belief that strength comes from shared experiences, we focus on the whole self, guided by four key pillars."
 };
