@@ -5,9 +5,9 @@ import { getSpotlight } from "@/lib/content";
 /**
  * The quarterly alumnae spotlight, published from /admin.
  *
- * When nothing has been published the section invites a nomination rather
- * than showing an invented person. Any individual field left blank is omitted
- * instead of rendering an empty row.
+ * When nothing has been published the section says so and invites a
+ * nomination, rather than showing an invented person. Any individual field
+ * left blank is omitted instead of rendering an empty row.
  */
 export default async function Spotlight() {
   const s = await getSpotlight();
@@ -37,15 +37,19 @@ export default async function Spotlight() {
                 className="aspect-[4/3] md:col-span-5 md:aspect-auto"
               />
               <div className="p-8 md:col-span-7 md:p-12">
-                <h3 className="display text-[clamp(1.5rem,3vw,2.5rem)] text-ink">
-                  Know someone
+                <span className="inline-flex items-center gap-2 rounded-full bg-berkeley-blue/5 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-berkeley-blue">
+                  <span className="h-1.5 w-1.5 rounded-full bg-california-gold" />
+                  Coming soon
+                </span>
+                <h3 className="display mt-5 text-[clamp(1.5rem,3vw,2.5rem)] text-ink">
+                  Our first spotlight
                   <br />
-                  who should be here?
+                  is on its way
                 </h3>
                 <p className="mt-5 max-w-md text-[15px] leading-relaxed text-ink/70">
-                  The next spotlight has not been published yet. Nominate an
-                  alumna whose work is moving this community forward and we will
-                  be in touch.
+                  We are choosing the alumna we will feature next. Know someone
+                  whose work is moving this community forward? Nominate her and
+                  we will be in touch.
                 </p>
                 <a href={nominateHref} className="btn-primary mt-8">
                   Nominate an alumna
